@@ -30,7 +30,7 @@ colour.odi_pink = "#E6007C"
 colour.odi_orange = "#FF6700"
 ```
 
-This analysis looks at the figures for Covid-19 cases in England. It's a little dig into what this data can - and can't - tell us.
+This analysis looks at the figures for Covid-19 cases in England. It's a little dig into what this data can - and can't - tell us. The [source code is available on Github](https://github.com/JeniT/covid-19/blob/master/covid19-cases-england-local-authorities.Rmd)
 
 The data is from `r params$covid19_data_url` and reports "lab-confirmed positive COVID-19 PCR test on or up to the specimen date". The specimen date is the date that someone had the test taken, and it can take a number of days to process the test and to report the result. That has some implications about the numbers from more recent days, which we'll come back to later. The official site has [more details about the meaning of case numbers](https://coronavirus.data.gov.uk/about-data#daily-and-cumulative-numbers-of-cases).
 
