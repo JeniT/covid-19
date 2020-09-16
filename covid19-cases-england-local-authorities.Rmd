@@ -1,0 +1,601 @@
+---
+title: "Covid-19 cases in England"
+output: 
+  html_document:
+    toc: true
+params:
+  covid19_data_url: "https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv"
+  restrictions_data_url: "https://docs.google.com/spreadsheets/d/1HBVmvsQXrkQgySW_OiTQdrS8WGCXqgWnmZ43PPi0XgY/export?format=csv&id=1HBVmvsQXrkQgySW_OiTQdrS8WGCXqgWnmZ43PPi0XgY"
+  testing_data_url: "https://api.coronavirus.data.gov.uk/v1/data?filters=areaType=nation;areaName=England&structure=%7B%22date%22:%22date%22,%22newPillarOneTestsByPublishDate%22:%22newPillarOneTestsByPublishDate%22,%22newPillarTwoTestsByPublishDate%22:%22newPillarTwoTestsByPublishDate%22,%22newPillarThreeTestsByPublishDate%22:%22newPillarThreeTestsByPublishDate%22%7D&format=csv"
+  capacity_data_url: "https://api.coronavirus.data.gov.uk/v1/data?filters=areaName=United%2520Kingdom;areaType=overview&structure=%7B%22date%22:%22date%22,%22capacityPillarOne%22:%22capacityPillarOne%22,%22capacityPillarTwo%22:%22capacityPillarTwo%22,%22capacityPillarThree%22:%22capacityPillarThree%22,%22capacityPillarFour%22:%22capacityPillarFour%22,%22newPillarOneTestsByPublishDate%22:%22newPillarOneTestsByPublishDate%22,%22newPillarTwoTestsByPublishDate%22:%22newPillarTwoTestsByPublishDate%22,%22newPillarThreeTestsByPublishDate%22:%22newPillarThreeTestsByPublishDate%22,%22newPillarFourTestsByPublishDate%22:%22newPillarFourTestsByPublishDate%22%7D&format=csv"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache = TRUE)
+library(knitr)
+library(tidyverse)
+library(slider)
+library(rgeos)
+library(rgdal)
+library(maptools)
+library(scales)
+
+colour.minimal = "#e6b735"
+colour.moderate = "#d97641"
+colour.substantial = "#c43d53"
+colour.widespread = "#802f67"
+colour.odi_blue = "#178CFF"
+colour.odi_green = "#0DBC37"
+colour.odi_pink = "#E6007C"
+colour.odi_orange = "#FF6700"
+```
+
+This analysis looks at the figures for Covid-19 cases in England. It's a little dig into what this data can - and can't - tell us.
+
+The data is from `r params$covid19_data_url` and reports "lab-confirmed positive COVID-19 PCR test on or up to the specimen date". The specimen date is the date that someone had the test taken, and it can take a number of days to process the test and to report the result. That has some implications about the numbers from more recent days, which we'll come back to later. The official site has [more details about the meaning of case numbers](https://coronavirus.data.gov.uk/about-data#daily-and-cumulative-numbers-of-cases).
+
+```{r read case data, include=FALSE}
+cases <- read_csv(params$covid19_data_url) %>%
+  rename(AreaName = `Area name`,
+         AreaCode = `Area code`,
+         AreaType = `Area type`,
+         Date = `Specimen date`,
+         DailyCases = `Daily lab-confirmed cases`,
+         CumulativeCases = `Cumulative lab-confirmed cases`,
+         CumulativeRate = `Cumulative lab-confirmed cases rate`)
+cases$Date <- as.Date(cases$Date)
+mostRecentDate = max(pull(cases, Date))
+```
+
+The most recent data shown here is from `r mostRecentDate`. This data is quite big: it contains `r nrow(cases)` rows and `r ncol(cases)` columns. That's why we're processing it in R rather than a Google Spreadsheet or Excel.
+
+Let's take a look at the first five lines.
+
+```{r show case data}
+kable(cases[1:5,], caption = "Confirmed Covid-19 cases in England")
+```
+
+Sometimes this data seems to contain no information for the most recent date. This manifests itself in the data when the number of daily cases given for England is zero (which you wouldn't expect unless we had really reached zero cases across the country, which is unlikely to happen any time soon). In these cases, we're going to remove the data from the most recent date (all of which are zeros) because it is inaccurate and throws off the rest of the calculations.
+
+```{r filter out most recent date}
+todaysEnglandCases <- filter(cases, AreaName == "England", Date == mostRecentDate)
+if (todaysEnglandCases$DailyCases == 0) {
+  cases <- filter(cases, Date != mostRecentDate)  
+  mostRecentDate = max(pull(cases, Date))
+  kable(cases[1:5,], caption = "Confirmed Covid-19 cases in England")
+}
+```
+
+As you can see, the data contains information about various different types of areas. Let's get a list of the different types:
+
+```{r identify area types, results='asis'}
+cat(paste("*", unique(pull(cases, AreaType))), sep="\n")
+```
+
+We're going to do analysis at the most granular of these levels: on Lower tier local authorities (`ltla`), so we'll filter the data down to rows that relate to that geography. We'll also group by local authority, order with the most recent date first, select only the columns that actually have useful data in them, and have another look at the table.
+
+```{r look at lower tier local authority data}
+localAuthorityCases <- filter(cases, AreaType == "ltla") %>% 
+  group_by(AreaCode) %>%
+  arrange(desc(Date)) %>%
+  select("AreaName", "AreaCode", "Date", "DailyCases", "CumulativeCases", "CumulativeRate")
+kable(localAuthorityCases[1:5,], caption = "Confirmed Covid-19 cases in lower tier local authorities")
+```
+
+## Examining cases in an area
+
+Let's pick an area and see whether we can plot the cumulative lab-confirmed cases for that area.
+
+```{r select an area to look at}
+selectedArea = "Manchester"
+```
+
+We'll pick on `r selectedArea`. We can look at `r selectedArea`'s data in a table:
+
+```{r look at selected area data}
+selectedCases <- filter(localAuthorityCases, AreaName == selectedArea)
+kable(selectedCases[1:5,], caption = paste("Confirmed Covid-19 cases in", selectedArea))
+```
+
+Now let's plot out the cumulative cases.
+
+```{r plot cumulative cases}
+ggplot(data = selectedCases) +
+  geom_area(mapping = aes(x = Date, y = CumulativeCases, group = 1), fill = "#333333") +
+  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_labels = "%b") +
+  scale_y_continuous(expand = c(0,0)) +
+  labs(x = "Date", y = "Number of cases", title = paste("Cumulative cases in", selectedArea))
+```
+
+Cumulative cases don't really help with understanding whether the number of cases are going up or down. To do that, we need to look at the daily lab-confirmed cases instead. This is what that shows:
+
+```{r plot daily cases}
+ggplot(data = selectedCases) +
+  geom_col(mapping = aes(x = Date, y = DailyCases, group = 1), fill = "#333333", width = 1) +
+  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_labels = "%b") +
+  scale_y_continuous(expand = c(0,0)) +
+  labs(x = "Date", y = "Number of cases", title = paste("Daily cases in", selectedArea))
+```
+
+And this isn't great, for two reasons. First, it's extremely spiky, especially around weekends when there is less testing. So we'll calculate a seven day rolling average, including 3 days each side of the day in question. 
+
+Second, we need to be careful about the figures from the last week: lab-confirmed cases are dated according to the date of the specimen (when the test was done) rather than when the result comes in, and they can take time to both process and report. As results come in, the data is updated to increase the figures on previous dates. So figures from the last week or so tend to be underestimates of the eventual numbers. We're going to indicate that on the graphs using an annotation.
+
+```{r plot average daily cases}
+localAuthorityCases <- mutate(localAuthorityCases, AverageDailyCases = slide_dbl(DailyCases, mean, .before = 3, .after = 3))
+
+selectedCases <- filter(localAuthorityCases, AreaName == selectedArea)
+kable(selectedCases[1:10,c("Date", "DailyCases", "AverageDailyCases")], caption = paste("Confirmed Covid-19 cases in", selectedArea))
+
+ggplot(data = selectedCases) +
+  geom_col(mapping = aes(x = Date, y = AverageDailyCases, group = 1), width = 1, fill = "#333333") +
+  annotate(geom = "text", color = colour.odi_orange, label = "  underestimates", angle = 90, hjust = 0, x = mostRecentDate - 3, y = 0) +
+  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_labels = "%b") +
+  scale_y_continuous(expand = c(0,0)) +
+  labs(x = "Date", y = "Seven day rolling average number of cases", title = paste("Daily cases in", selectedArea)) +
+  theme(legend.position = "top")
+```
+
+## Indicating when restrictions are in place
+
+I've created a [Google spreadsheet of restrictions](https://docs.google.com/spreadsheets/d/1HBVmvsQXrkQgySW_OiTQdrS8WGCXqgWnmZ43PPi0XgY/edit#gid=0) to make it easy for the graphs to indicate when restrictions are in place at different levels. Let's take a look at this data.
+
+```{r read restrictions data, include=FALSE}
+restrictions <- read_csv(params$restrictions_data_url)
+restrictions$StartDate <- as.Date(restrictions$StartDate)
+restrictions$EndDate <- as.Date(restrictions$EndDate)
+```
+
+Note that the data has missing `EndDate` values when the restrictions haven't yet been lifted. To make the graphing work, we need to substitute any missing values with the most recent date.
+
+```{r add missing end dates}
+kable(restrictions[1:5,], caption = "Restrictions data")
+restrictions <- mutate(restrictions, EndDate = if_else(is.na(EndDate), max(mostRecentDate, StartDate), EndDate))
+```
+
+Now, when we plot the cases in a particular area, we can find any restrictions in that area and also plot those, alongside the nation-wide lockdown that ran from 23rd March to 4th July. Here I've shown that in blue.
+
+```{r plot selected area cases with restrictions}
+yrng = range(selectedCases$AverageDailyCases)
+selectedRestrictions <- filter(restrictions, AreaName == selectedArea)
+
+ggplot(data = selectedCases) +
+  annotate(geom = "rect", xmin = as.Date("2020-03-23"), xmax = as.Date("2020-07-04"), ymin = 0, ymax = yrng[2], fill = colour.odi_blue, alpha = 0.3) +
+  annotate(geom = "text", x = as.Date("2020-05-15"), y = yrng[2] * 0.95, color = colour.odi_blue, label = "LOCKDOWN") +
+  geom_rect(aes(xmin = StartDate, xmax = EndDate),
+ymin = 0, ymax = yrng[2], fill = colour.odi_blue, alpha = 0.3, data = selectedRestrictions) +
+  geom_col(mapping = aes(x = Date, y = AverageDailyCases, group = 1), width = 1, fill = "#333333") +
+  annotate(geom = "text", color = colour.odi_orange, label = "  underestimates", angle = 90, hjust = 0, x = mostRecentDate - 3, y = 0) +
+  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_labels = "%b") +
+  scale_y_continuous(expand = c(0,0)) +
+  labs(x = "Date", y = "Seven day rolling average number of cases", title = paste("Daily cases in", selectedArea)) +
+  theme(legend.position = "top")
+```
+
+Here we can see that the national lockdown did have an effect in `r selectedArea`, but that the cases started rising again a couple of weeks before the local lockdown was put into effect. The local lockdown doesn't seem to have had as big an effect on the number of cases.
+
+## Understanding testing levels
+
+The graphs we're creating here indicate underestimates due to the time it takes for new cases to filter through into reported data. Another thing that can cause an underestimate in the number of cases shown is the amount of testing that is going on and the degree to which people go and get testing (which they might not do for various reasons, such as if they think it will be unpleasant, time-consuming, or deprioritise their own testing in favour of others such as health and care workers). It would be good to be able to show where that's likely to have been happening.
+
+In the UK, the numbers of tests that are carried out are only available at the national level. We'll load the data for England and take a look at it. (We'll change the names of the columns because the data uses the [pillar numbers](https://coronavirus.data.gov.uk/about-data#daily-and-cumulative-numbers-of-tests) which are a bit confusing if you're not steeped in the data. The request I'm using to get this data doesn't include surveillance data numbers - tests that are sent out randomly to get an understanding of prevalence across the country, rather than tests requested by people who have symptoms - because they only exist for the whole of the UK, not specifically for England.)
+
+```{r read testing data, include=FALSE}
+tests <- read_csv(params$testing_data_url) %>% 
+  rename(Date = date,
+         NewNHSTests = newPillarOneTestsByPublishDate,
+         NewCommercialTests = newPillarTwoTestsByPublishDate,
+         NewAntibodyTests = newPillarThreeTestsByPublishDate)
+tests$Date <- as.Date(tests$Date)
+```
+```{r show testing data}
+kable(tests[1:5,], caption = "Number of lab-confirmed positive or negative COVID-19 test results, by pillar")
+```
+
+Let's graph those tests in a stacked bar chart.
+
+```{r graph tests of different types over time}
+maxTotalTests = max(mutate(tests, TotalDailyTests = NewNHSTests + if_else(is.na(NewCommercialTests), 0, NewCommercialTests) + if_else(is.na(NewAntibodyTests), 0, NewAntibodyTests))$TotalDailyTests)
+
+tests <- gather(tests, "TestType", "DailyTests", NewNHSTests:NewAntibodyTests) %>%
+  filter(!is.na(DailyTests))
+
+ggplot(data = tests) +
+  annotate(geom = "segment", x = as.Date("2020-06-01"), y = 0, xend = as.Date("2020-06-01"), yend = maxTotalTests, linetype = "dashed", color = colour.odi_pink) +
+  annotate(geom = "text", label = "antibody testing data starts", x = as.Date("2020-05-26"), y = maxTotalTests * 0.95, hjust = 1, angle = 90, color = colour.odi_pink) +
+  annotate(geom = "segment", x = as.Date("2020-07-14"), y = 0, xend = as.Date("2020-07-14"), yend = maxTotalTests, linetype = "dashed", color = colour.odi_green) +
+  annotate(geom = "text", label = "commercial testing data starts", x = as.Date("2020-07-09"), y = maxTotalTests * 0.95, hjust = 1, angle = 90, color = colour.odi_green) +
+  geom_col(mapping = aes(x = Date, y = DailyTests, fill = TestType, group = 1), width = 1) +
+  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_labels = "%b") +
+  scale_y_continuous(expand = c(0,0)) +
+  scale_fill_manual(values = c("NewNHSTests" = colour.odi_blue, "NewCommercialTests" = colour.odi_green, "NewAntibodyTests" = colour.odi_pink),
+                    labels = c("NewNHSTests" = "NHS", "NewCommercialTests" = "Commercial", "NewAntibodyTests" = "Antibody")) +
+  labs(x = "Date", y = "Number of test results", title = "Number of daily test results over time", fill = "Test type") +
+  theme(legend.position = "top")
+```
+
+Again this data is very spikey so we'll smooth it out.
+
+```{r graph averaged tests of different types over time}
+tests <- group_by(tests, TestType) %>% 
+  arrange(Date, .by_group = TRUE) %>%
+  mutate(AverageDailyTests = slide_dbl(DailyTests, mean, .before = 3, .after = 3)) %>%
+  ungroup() %>%
+  arrange(TestType == "NewCommercialTests",
+          TestType == "NewAntibodyTests",
+          TestType == "NewNHSTests")
+
+ggplot(data = tests) +
+  annotate(geom = "segment", x = as.Date("2020-06-01"), y = 0, xend = as.Date("2020-06-01"), yend = maxTotalTests, linetype = "dashed", color = colour.odi_pink) +
+  annotate(geom = "text", label = "antibody testing data starts", x = as.Date("2020-05-26"), y = maxTotalTests * 0.95, hjust = 1, angle = 90, color = colour.odi_pink) +
+  annotate(geom = "segment", x = as.Date("2020-07-14"), y = 0, xend = as.Date("2020-07-14"), yend = maxTotalTests, linetype = "dashed", color = colour.odi_green) +
+  annotate(geom = "text", label = "commercial testing data starts", x = as.Date("2020-07-09"), y = maxTotalTests * 0.95, hjust = 1, angle = 90, color = colour.odi_green) +
+  geom_col(mapping = aes(x = Date, y = AverageDailyTests, fill = TestType, group = 1), width = 1) +
+  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_labels = "%b") +
+  scale_y_continuous(expand = c(0,0), labels = comma) +
+  scale_fill_manual(values = c("NewNHSTests" = colour.odi_blue, "NewCommercialTests" = colour.odi_green, "NewAntibodyTests" = colour.odi_pink),
+                    labels = c("NewNHSTests" = "NHS", "NewCommercialTests" = "Commercial", "NewAntibodyTests" = "Antibody")) +
+  labs(x = "Date", y = "Number of test results", title = "Number of daily test results over time", fill = "Test type") +
+  theme(legend.position = "top")
+```
+
+### Comparing tests to cases
+
+One interesting thing to look at is the relative numbers of tests and lab-confirmed cases. Now this isn't an exact science as the lab-confirmed cases are based on numbers of *people* while the tests are based on numbers of *tests*. The same person could receive lots of tests, and the number of tests each person receives could vary over time (for example as testing policy changes). More comparative measures would be the percentage of positive tests, or the number of people tested, but this data isn't published (which may mean it doesn't exist, or simply that it isn't shared).
+
+Since we're dealing with data at a national scale, let's join together the data we have for cases in England with this testing data to take a look at testing percentages. When doing this, we'll sum together the NHS and commercial tests (but not the antibody tests, which measure when people *have had* Covid-19 rather than whether they currently have it) to see what population is being reached.
+
+```{r join testing data with case data}
+englandTests <- ungroup(tests) %>%
+  filter(TestType %in% c("NewNHSTests", "NewCommercialTests")) %>%
+  group_by(Date) %>%
+  summarise(TotalDailyTests = sum(DailyTests, na.rm = TRUE), .groups = "drop") %>%
+  mutate(TotalAverageDailyTests = slide_dbl(TotalDailyTests, mean, .before = 3, .after = 3))
+englandData = filter(cases, AreaName == "England") %>%
+  select(Date, DailyCases) %>%
+  mutate(AverageDailyCases = slide_dbl(DailyCases, mean, .before = 3, .after = 3)) %>%
+  left_join(englandTests, by = "Date")
+```
+
+If we plot this data, we can see the scale of testing (in blue) is massive compared to the scale of cases (in orange).
+
+```{r graph testing and case data together}
+
+ggplot(data = englandData) +
+  annotate(geom = "segment", x = as.Date("2020-04-01"), y = 0, xend = as.Date("2020-04-01"), yend = maxTotalTests, linetype = "dashed", color = colour.odi_blue) +
+  annotate(geom = "text", label = "NHS testing data starts", x = as.Date("2020-03-27"), y = maxTotalTests * 0.95, hjust = 1, angle = 90, color = colour.odi_blue) +
+  annotate(geom = "segment", x = as.Date("2020-07-14"), y = 0, xend = as.Date("2020-07-14"), yend = maxTotalTests, linetype = "dashed", color = colour.odi_blue) +
+  annotate(geom = "text", label = "commercial testing data starts", x = as.Date("2020-07-09"), y = maxTotalTests * 0.95, hjust = 1, angle = 90, color = colour.odi_blue) +
+  geom_col(data = filter(englandData, !is.na(TotalAverageDailyTests)),
+           mapping = aes(x = Date, y = TotalAverageDailyTests, fill = "Tests"), width = 1) +
+  geom_col(mapping = aes(x = Date, y = AverageDailyCases, fill = "Cases"), width = 1) +
+  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_labels = "%b") +
+  scale_y_continuous(expand = c(0,0), labels = comma) +
+  scale_fill_manual(values = c("Tests" = colour.odi_blue, "Cases" = colour.odi_orange)) +
+  labs(x = "Date", y = "Number of cases / test results", title = "Number of daily test results and daily cases over time", fill = "Measure") +
+  theme(legend.position = "top")
+```
+
+We can work out the percentage of tests that are leading to cases each day, and plot that as follows.
+
+```{r graph proportion of cases to tests over time}
+englandData <- filter(englandData, !is.na(TotalDailyTests)) %>%
+  mutate(DailyPositiveTestPercentage = DailyCases * 100 / TotalDailyTests) %>%
+  mutate(AverageDailyPositiveTestPercentage = slide_dbl(DailyPositiveTestPercentage, mean, .before = 3, .after = 3))
+
+yrng = range(englandData$AverageDailyPositiveTestPercentage)
+
+ggplot(data = englandData) +
+  annotate(geom = "segment", x = as.Date("2020-07-14"), y = 0, xend = as.Date("2020-07-14"), yend = yrng[2], linetype = "dashed", color = colour.odi_blue) +
+  annotate(geom = "text", label = "commercial testing data starts", x = as.Date("2020-07-09"), y = yrng[2] * 0.95, hjust = 1, angle = 90, color = colour.odi_blue) +
+  geom_line(mapping = aes(x = Date, y = AverageDailyPositiveTestPercentage),
+            color = colour.odi_blue, size = 2) +
+  scale_x_date(expand = c(0,0), date_breaks = "1 month", date_labels = "%b") +
+  scale_y_continuous(limit = c(0,40), expand = c(0,0), labels = comma) +
+  labs(x = "Date", y = "Percentage", title = "Proportion of tests to cases over time") +
+  theme(legend.position = "top")
+```
+
+The graph shows how the relationship between number of lab-confirmed cases (all of which will have had a test) and overall numbers of tests has changed dramatically over time. At the start, the number of tests was only about three times the number of cases; more recently, there have been more than 100 tests per positive case.
+
+This is a bit of a misleading picture, however. The data about commercial tests isn't represented in the data until 14th July, so we have to consider before and after that date separately. Testing data is also only released every week, on a Thursday, so we should ignore everything after last Thursday. Let's narrow down the data to the period between those dates and take another look.
+
+```{r graph proportion of cases to tests since 14th July}
+previousDays = seq(mostRecentDate - 6, mostRecentDate, by = "day")
+lastThursday = previousDays[weekdays(previousDays) == "Thursday"]
+
+recentData <- filter(englandData, Date >= as.Date("2020-07-14"), Date <= lastThursday)
+
+ggplot(data = recentData) +
+  geom_line(mapping = aes(x = Date, y = AverageDailyPositiveTestPercentage),
+            color = colour.odi_blue, size = 2) +
+  scale_x_date(expand = c(0,0), date_breaks = "1 week", date_labels = "%b-%d") +
+  scale_y_continuous(limit = c(0, 2), expand = c(0,0)) +
+  labs(x = "Date", y = "Percentage", title = "Proportion of tests to cases over time since reporting of commercial tests") +
+  theme(legend.position = "top")
+```
+
+The proportion roughly doubled between mid and late August, but the proportion is still very low compared to that at the beginning of the UK epidemic. Given the proportions before the start of June, it's likely that the number of cases before then were underestimates simply due to lower testing.
+
+### Comparing tests to capacity
+
+An alternative mechanism for understanding the effect of testing is to use government figures for testing *capacity*. These are only available for the whole of the UK (when in fact capacity might be different in different nations and local authorities). Nevertheless, let's look at what that data says.
+
+```{r read capacity data, include=FALSE}
+capacity <- read_csv(params$capacity_data_url) %>% 
+  rename(Date = date,
+         NewNHSTests = newPillarOneTestsByPublishDate,
+         NewCommercialTests = newPillarTwoTestsByPublishDate,
+         NewAntibodyTests = newPillarThreeTestsByPublishDate,
+         NewSurveillanceTests = newPillarFourTestsByPublishDate,
+         NHSCapacity = capacityPillarOne,
+         CommercialCapacity = capacityPillarTwo,
+         AntibodyCapacity = capacityPillarThree,
+         SurveillanceCapacity = capacityPillarFour)
+
+capacity$Date <- as.Date(capacity$Date)
+```
+```{r display capacity data}
+kable(capacity[1:5,], caption = "Number and capacity of lab-confirmed positive or negative COVID-19 test results, by pillar")
+```
+
+We can calculate what percentage of capacity we've been operating on based on these figures, and then plot them. We'll exclude surveillance data since the reported capacity is inaccurate (the data shows more tests being done than there is capacity for, for example). We'll also only look at data since 14th July, since that's when commercial testing data started being properly reported across the UK.
+
+```{r graph percentage of capacity}
+capacity <- filter(capacity, Date >= as.Date("2020-07-14")) %>%
+  mutate(NHSCapacityPercentage = NewNHSTests / NHSCapacity,
+         CommercialCapacityPercentage = NewCommercialTests / CommercialCapacity,
+         AntibodyCapacityPercentage = NewAntibodyTests / AntibodyCapacity,
+         SurveillanceCapacityPercentage = NewSurveillanceTests / SurveillanceCapacity) %>%
+  mutate(AverageNHSCapacityPercentage = slide_dbl(NHSCapacityPercentage, mean, .before = 3, .after = 3),
+         AverageCommercialCapacityPercentage = slide_dbl(CommercialCapacityPercentage, mean, .before = 3, .after = 3),
+         AverageAntibodyCapacityPercentage = slide_dbl(AntibodyCapacityPercentage, mean, .before = 3, .after = 3),
+         AverageSurveillanceCapacityPercentage = slide_dbl(SurveillanceCapacityPercentage, mean, .before = 3, .after = 3))
+
+ggplot() +
+  geom_line(data = filter(capacity, !is.na(AverageNHSCapacityPercentage)),
+            mapping = aes(x = Date, y = AverageNHSCapacityPercentage, color = "NHS"),
+            size = 2) +
+  geom_line(data = filter(capacity, !is.na(AverageCommercialCapacityPercentage)),
+            mapping = aes(x = Date, y = AverageCommercialCapacityPercentage, color = "Commercial"),
+            size = 2) +
+  geom_line(data = filter(capacity, !is.na(AverageAntibodyCapacityPercentage)),
+            mapping = aes(x = Date, y = AverageAntibodyCapacityPercentage, color = "Antibody"),
+            size = 2) +
+  scale_x_date(expand = c(0,0), date_breaks = "1 week", date_labels = "%b-%d") +
+  scale_y_continuous(limits = c(0,1), expand = c(0,0), labels = percent) +
+  scale_color_manual(values = c("NHS" = colour.odi_blue, "Commercial" = colour.odi_green, "Antibody" = colour.odi_pink)) +
+  labs(x = "Date", y = "Percentage", title = "Percentage of capacity used for different types of tests", color = "Test type") +
+  theme(legend.position = "top")
+```
+
+This shows in particular how reported commercial capacity was almost used up in mid August. The following graph shows overall NHS and commercial testing capacity since mid July.
+
+```{r graph overall percentage of capacity}
+capacity <- mutate(capacity, 
+                   TotalCapacity = NHSCapacity + CommercialCapacity,
+                   TotalTests = NewNHSTests + NewCommercialTests,
+                   TotalCapacityPercentage = TotalTests / TotalCapacity,
+                   AverageTotalCapacityPercentage = slide_dbl(TotalCapacityPercentage, mean, .before = 3, .after = 3)) %>%
+  filter(!is.na(AverageTotalCapacityPercentage))
+
+ggplot(data = capacity) +
+  geom_line(mapping = aes(x = Date, y = AverageTotalCapacityPercentage),
+            color = colour.odi_blue, size = 2) +
+  scale_x_date(expand = c(0,0), date_breaks = "1 week", date_labels = "%b-%d") +
+  scale_y_continuous(limits = c(0,1), expand = c(0,0), labels = percent) +
+  labs(x = "Date", y = "Percentage", title = "Percentage of capacity used for NHS and commercial tests combined") +
+  theme(legend.position = "top")
+```
+
+The overall testing capacity isn't maxed out, but remember these are figures for the whole of the UK. It's likely (especially given recent news reports) that testing capacity is different in different parts of the country, and perhaps most stretched in places with the most cases. So we might expect figures since mid August to also be underestimates (compared to those from earlier in the summer).
+
+Overall, though, it's hard to draw solid conclusions from the available testing data about the degree to which lack of testing might be influencing the numbers of cases reported in the data.
+
+## Comparing local authorities
+
+Let's return now to the overall data for local authorities. When we start looking across local authorities, we need to bear in mind that different local authorities have different sizes. A certain absolute number of cases in a small local authority is more concerning than if that number of cases were present in a larger local authority, because it would mean a greater percentage of the population were affected.
+
+So we need to calculate infection rates. To do that, we need [population data from the ONS](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatesforukenglandandwalesscotlandandnorthernireland) which is only available as an Excel file. I've cheated and downloaded and converted it to a CSV file locally so that I can use it, rather than try to load the Excel file from source.
+
+```{r read populations, include=FALSE}
+populations <- read_csv("populations.csv")
+```
+
+Now we can join that data together with the data we have on cases, and from it calculate rates per 100,000 people. The table shows those areas with the highest current average daily rate (which, remember, are likely to be underestimates because recent case numbers are underestimates).
+
+```{r calculate rates}
+localAuthorityCases <- left_join(localAuthorityCases, populations, by = c("AreaCode" = "Code"))
+
+localAuthorityCases <- mutate(localAuthorityCases, DailyRate = DailyCases * 100000 / `All ages`)
+localAuthorityCases <- mutate(localAuthorityCases, AverageDailyRate = AverageDailyCases * 100000 / `All ages`)
+
+# Ordering based on recent high rates
+localAuthorityCases <- arrange(localAuthorityCases, desc(Date), desc(AverageDailyRate))
+kable(localAuthorityCases[1:10,c("AreaName", "Date", "AverageDailyCases", "All ages", "AverageDailyRate")], caption = "Confirmed Covid-19 case rates per 100,000")
+```
+
+What kind of rate of new cases should we worry about? Well, in California, they have [defined four levels of risk](https://covid19.ca.gov/safer-economy/):
+
+  * **Widespread**: more than 7 daily new cases / 100,000
+  * **Substantial**: between 4-7 daily new cases / 100,000
+  * **Moderate**: between 1-4 daily new cases / 100,000
+  * **Minimal**: less than 1 daily new case / 100,000
+
+As discussed, it is possible to reduce the number of new cases in the data by simply not testing as many people. In the UK, testing capacity is probably not limited in this way, but there isn't enough granularity in the public testing figures to be able to tell. Regardless, the figures above give a rough indication of how concerned to be about the level of infection in an area.
+
+We'll try to plot these on a map. There's a great [tutorial for this](https://rforjournalists.com/2019/10/20/how-to-make-a-uk-local-authority-choropleth-map-in-r/) which we'll just follow. We're using [ultra generalised 2019 boundaries from ONS](https://geoportal.statistics.gov.uk/datasets/local-authority-districts-april-2019-uk-buc), which like the population data we've downloaded locally into a folder.
+
+First we load the shape file and ensure that it knows what regions we're using from it.
+
+```{r load shape file, include=FALSE}
+shp <- readOGR('Local_Authority_Districts__April_2019__UK_BUC_v2')
+shp <- fortify(shp, region = 'LAD19CD')
+```
+
+Then we filter the local authority data to the most recent date (`r mostRecentDate`) and retain only area code and the average daily rate. This is the data that's relevant for the map.
+
+```{r get most recent daily rate}
+mapData <- filter(localAuthorityCases, Date == mostRecentDate) %>% select(AreaCode, AverageDailyRate)
+```
+
+Then we merge the map data into the shape data and plot the map.
+
+```{r display map, fig.height = 7}
+# merge the map data into the shape data
+shp <- merge(shp, mapData, by.x = 'id', by.y = 'AreaCode', all.x = TRUE)
+shp <- arrange(shp, order)
+
+# plot the map
+ggplot(data = shp, aes(x = long, y = lat, group = group, fill = AverageDailyRate)) + 
+  geom_polygon() + 
+  coord_equal() + 
+  theme_void() +
+  scale_fill_gradientn(
+    colours = c(colour.minimal, colour.moderate, colour.substantial, colour.widespread),
+    breaks = c(0.5,2.5,5.5,8.5),
+    labels = c("Minimal", "Moderate", "Substantial", "Widespread")
+  ) +
+  ggtitle('Average daily Covid-19 rate',
+          subtitle = paste('England and Wales,', mostRecentDate))
+```
+
+This highlights some areas that have high rates of cases, but unless you're great at UK geography you might struggle to name them. So we'll move on to look at some individually.
+
+## Areas where there are or have been government lockdowns
+
+First, we'll have a look at what's going on in the areas where there are or have been government lockdowns. These are listed in the `restrictions` table. We can cycle through them - here we're sorting the areas based on the date the restriction came into force - to take a look at what's happening there.
+
+Interesting areas to look at here are:
+
+  * **Northampton**, where there was a local outbreak in the [Greencore factories](https://www.gov.uk/guidance/northampton-what-you-can-and-cannot-do). The data shows a big spike in the middle of August, probably due to extensive local testing around those outbreaks.
+  * **Leicester**, which shows a peak during June, when the majority of the rest of the country had come out the other side of the first wave.
+  * Areas like **Bolton** and **Salford**, which were in a local lockdown from the beginning of August - probably because of their physical proximity to Manchester - despite their rate of infection being relatively low, but where case numbers have escalated significantly *during* this local lockdown, in the second half of August.
+
+```{r graph areas with restrictions}
+case_rate_graph = function(area) {
+  areaCases <- filter(localAuthorityCases, AreaName == area)
+  areaRestrictions <- filter(restrictions, AreaName == area)
+  yrng = range(areaCases$AverageDailyRate)
+  xrng = range(areaCases$Date)
+
+  return(
+    ggplot(data = areaCases) +
+    annotate(geom = "rect", xmin = xrng[1], xmax = xrng[2], ymin = 0, ymax = 1, fill = colour.minimal, alpha = 0.5) +
+    annotate(geom = "text", x = xrng[1] + 5, y = 0.5, hjust = 0, color = colour.minimal, label = "MINIMAL") +
+    annotate(geom = "rect", xmin = xrng[1], xmax = xrng[2], ymin = 1, ymax = 4, fill = colour.moderate, alpha = 0.5) +
+    annotate(geom = "text", x = xrng[1] + 5, y = 2.5, hjust = 0, color = colour.moderate, label = "MODERATE") +
+    annotate(geom = "rect", xmin = xrng[1], xmax = xrng[2], ymin = 4, ymax = min(7, yrng[2]), fill = colour.substantial, alpha = 0.5) +
+    annotate(geom = "text", x = xrng[1] + 5, y = 4 + (min(7, yrng[2]) - 4) / 2, hjust = 0, color = colour.substantial, label = "SUBSTANTIAL") +
+    annotate(geom = "rect", xmin = xrng[1], xmax = xrng[2], ymin = min(7, yrng[2]), ymax = yrng[2], fill = colour.widespread, alpha = 0.5) +
+    annotate(geom = "text", x = xrng[1] + 5, y = 7 + (yrng[2] - 7) / 2, hjust = 0, color = colour.widespread, label = "WIDESPREAD") +
+    annotate(geom = "rect", xmin = as.Date("2020-03-23"), xmax = as.Date("2020-07-04"), ymin = 0, ymax = yrng[2], fill = "white", alpha = 0.3) +
+    annotate(geom = "text", x = as.Date("2020-05-15"), y = yrng[2] * 0.95, color = "white", label = "LOCKDOWN") +
+    annotate(geom = "segment", x = as.Date("2020-07-04"), y = yrng[1], xend = as.Date("2020-07-04"), yend = yrng[2], color = "white", linetype = "dashed") +
+    annotate(geom = "text", x = as.Date("2020-07-07"), y = yrng[2] * 0.95, hjust = 1, angle = 90, color = "white", label = "national lockdown ends") +
+    geom_rect(
+      aes(xmin = StartDate, xmax = EndDate),
+          ymin = 0, ymax = yrng[2], fill = "white", alpha = 0.3,
+          data = areaRestrictions) +
+    geom_col(mapping = aes(x = Date, y = AverageDailyRate, group = 1),
+             fill = "#333333", width = 1) +
+    annotate(geom = "text", color = colour.odi_orange, label = "  underestimates", angle = 90, hjust = 0, x = mostRecentDate - 3, y = 0) +
+    scale_x_date(expand = c(0,0), date_breaks = "1 month", date_labels = "%b") +
+    scale_y_continuous(limits = c(0,yrng[2]), expand = c(0,0)) +
+    guides(fill = FALSE) +
+    labs(x = "Date", y = "Daily cases per 100,000 population", title = area)
+  )
+}
+
+restrictedAreas = unique(pull(restrictions, AreaName))
+
+for (area in restrictedAreas) {
+  print(case_rate_graph(area))
+}
+```
+
+## Identifying worrying areas
+
+The areas we really care about are those where there's a high daily rate, and particularly those where that rate is increasing. We'll add a couple of columns that track the degree to which the average daily rate is increasing or decreasing.
+
+```{r calculate trends in rate}
+localAuthorityCases <- mutate(localAuthorityCases, DailyRateIncreasePercentage = round((AverageDailyRate - lead(AverageDailyRate)) / AverageDailyRate, 2))
+localAuthorityCases <- mutate(localAuthorityCases, AverageRateIncreasePercentage = round(slide_dbl(DailyRateIncreasePercentage, mean, .before = 3, .after = 3), 2))
+
+selectedCases <- filter(localAuthorityCases, AreaName == selectedArea)
+kable(selectedCases[1:5,c("Date", "DailyRate", "AverageDailyRate", "DailyRateIncreasePercentage", "AverageRateIncreasePercentage")], caption = paste("Identifying trend in", selectedArea))
+```
+
+Now let's narrow down to places that have seen concerning levels of cases over the last week.
+
+```{r calculate date for a week ago}
+mostRecentDate = max(pull(cases, Date))
+oneWeekAgo = mostRecentDate - 6
+```
+
+### Widespread infection
+
+The most recent date is `r mostRecentDate` so one week ago is `r oneWeekAgo`. First let's look at those who had widespread daily rates (over 7 cases / day / 100,000 population) at some point in the last week.
+
+```{r identify areas with widespread infection rates, results='asis'}
+recentCases <- filter(localAuthorityCases, Date > oneWeekAgo)
+widespreadAverageRates <- filter(recentCases, AverageDailyRate >= 7)
+widespreadAreas = unique(pull(arrange(widespreadAverageRates, desc(AverageDailyRate)), AreaName))
+
+# print a list of these areas
+cat(paste("*", widespreadAreas), sep="\n")
+```
+
+Now we'll create charts for those places where there is widespread infection that do not currently have additional restrictions (some of which might be duplicates of the graphs above, because they previously did have local restrictions):
+
+```{r graph data for areas with widespread infection rates}
+currentRestrictions = unique(pull(filter(restrictions, EndDate >= mostRecentDate), AreaName))
+
+for (area in widespreadAreas) {
+  if (!(area %in% currentRestrictions)) {
+    print(case_rate_graph(area))
+  }
+}
+```
+
+### Significant and increasing infection
+
+Finally, we'll make a list of places where there's been a significant infection (over 4 cases / day / 100,000 population) at some point over the last week *and* that are seeing increases in those rates.
+
+```{r identify worrisome areas, results='asis'}
+highAverageRates <- 
+  filter(recentCases, AverageDailyRate >= 4) %>% filter(AverageDailyRate < 7)
+highAverageRatesAndIncreasing <- 
+  filter(highAverageRates, AverageRateIncreasePercentage > 0)
+worrisomeAreas = unique(pull(arrange(highAverageRatesAndIncreasing, desc(AverageDailyRate)), AreaName))
+
+# print a list of these areas
+cat(paste("*", worrisomeAreas), sep="\n")
+```
+
+Again we'll create charts for those places that do not currently have additional restrictions:
+
+```{r graph data for worrisome areas}
+for (area in worrisomeAreas) {
+  if (!(area %in% currentRestrictions)) {
+    print(case_rate_graph(area))
+  }
+}
+```
+
+## Identifying areas that aren't worrying
+
+Finally, for comparison, let's have a look at the ten places with the lowest current average daily rates.
+
+```{r identify low rate areas, results='asis'}
+okAreas = unique(pull(arrange(recentCases, AverageDailyRate), AreaName))[1:10]
+
+# print a list of these areas
+cat(paste("*", okAreas), sep="\n")
+```
+
+```{r graph data for low rate areas}
+for (area in okAreas) {
+  print(case_rate_graph(area))
+}
+```
