@@ -30,7 +30,7 @@ colour.odi_pink = "#E6007C"
 colour.odi_orange = "#FF6700"
 ```
 
-This analysis looks at the figures for Covid-19 cases in England. It's a little dig into what this data can - and can't - tell us. The [source code is available on Github](https://github.com/JeniT/covid-19/blob/master/covid19-cases-england-local-authorities.Rmd)
+This analysis looks at the figures for Covid-19 cases in England. It's a little dig into what this data can - and can't - tell us. The [source code is available on Github](https://github.com/JeniT/covid-19/blob/master/covid19-cases-england-local-authorities.Rmd).
 
 The data is from `r params$covid19_data_url` and reports "lab-confirmed positive COVID-19 PCR test on or up to the specimen date". The specimen date is the date that someone had the test taken, and it can take a number of days to process the test and to report the result. That has some implications about the numbers from more recent days, which we'll come back to later. The official site has [more details about the meaning of case numbers](https://coronavirus.data.gov.uk/about-data#daily-and-cumulative-numbers-of-cases).
 
@@ -537,24 +537,26 @@ oneWeekAgo = mostRecentDate - 6
 
 The most recent date is `r mostRecentDate` so one week ago is `r oneWeekAgo`. First let's look at those who had widespread daily rates (over 7 cases / day / 100,000 population) at some point in the last week.
 
-```{r identify areas with widespread infection rates, results='asis'}
+```{r identify areas with widespread infection rates}
 recentCases <- filter(localAuthorityCases, Date > oneWeekAgo)
 widespreadAverageRates <- filter(recentCases, AverageDailyRate >= 7)
 widespreadAreas = unique(pull(arrange(widespreadAverageRates, desc(AverageDailyRate)), AreaName))
 
-# print a list of these areas
-cat(paste("*", widespreadAreas), sep="\n")
+currentRestrictions = unique(pull(filter(restrictions, EndDate >= mostRecentDate), AreaName))
+unlockedDownAreas = widespreadAreas[!(widespreadAreas %in% currentRestrictions)]
+```
+
+There are `r length(widespreadAreas)` areas where there is widespread infection, `r length(unlockedDownAreas)` of which aren't currently in lockdown. Those are:
+
+```{r display widespread areas, results='asis'}
+cat(paste("*", unlockedDownAreas), sep="\n")
 ```
 
 Now we'll create charts for those places where there is widespread infection that do not currently have additional restrictions (some of which might be duplicates of the graphs above, because they previously did have local restrictions):
 
-```{r graph data for areas with widespread infection rates}
-currentRestrictions = unique(pull(filter(restrictions, EndDate >= mostRecentDate), AreaName))
-
-for (area in widespreadAreas) {
-  if (!(area %in% currentRestrictions)) {
-    print(case_rate_graph(area))
-  }
+```{r graph data for areas with widespread infection rates, results='asis'}
+for (area in unlockedDownAreas) {
+  print(case_rate_graph(area))
 }
 ```
 
@@ -596,6 +598,39 @@ cat(paste("*", okAreas), sep="\n")
 
 ```{r graph data for low rate areas}
 for (area in okAreas) {
+  print(case_rate_graph(area))
+}
+```
+
+
+## Areas of interest
+
+Just to highlight areas that are [in the news](https://www.theguardian.com/world/2020/sep/17/leeds-poised-join-list-areas-under-local-coronavirus-lockdowns):
+
+```{r areas in the news, results='asis'}
+newsAreas = c("Leeds", "Burnley", "Chorley", "Fylde", "Hyndburn", "Lancaster", "Pendle", "Preston", "Ribble Valley", "Rossendale", "South Ribble", "West Lancashire", "Wyre", "Blackpool", "Blackburn with Darwen")
+
+# print a list of these areas
+cat(paste("*", newsAreas), sep="\n")
+```
+
+```{r graph data for areas in the news}
+for (area in newsAreas) {
+  print(case_rate_graph(area))
+}
+```
+
+London is also in the news, so we'll also look at London boroughs:
+
+```{r london boroughs, results='asis'}
+londonBoroughs = c("City of London", "City of Westminster", "Kensington and Chelsea", "Hammersmith and Fulham", "Wandsworth", "Lambeth", "Southwark", "Tower Hamlets", "Hackney", "Islington", "Camden", "Brent", "Ealing", "Hounslow", "Richmond upon Thames", "Kingston upon Thames", "Merton", "Sutton", "Croydon", "Bromley", "Lewisham", "Greenwich", "Bexley", "Havering", "Barking and Dagenham", "Redbridge", "Newham", "Waltham Forest", "Haringey", "Enfield", "Barnet", "Harrow", "Hillingdon")
+
+# print a list of these areas
+cat(paste("*", newsAreas), sep="\n")
+```
+
+```{r graphs for london boroughs}
+for (area in londonBoroughs) {
   print(case_rate_graph(area))
 }
 ```
