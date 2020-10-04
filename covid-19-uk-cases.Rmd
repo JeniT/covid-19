@@ -558,7 +558,7 @@ case_rate_graph = function(area) {
     annotate(geom = "rect", xmin = xrng[1], xmax = xrng[2], ymin = 0, ymax = 1, fill = colour.minimal, alpha = 0.5) +
     annotate(geom = "text", x = xrng[1] + 5, y = 0.5, hjust = 0, color = colour.minimal, label = "MINIMAL") +
     annotate(geom = "rect", xmin = xrng[1], xmax = xrng[2], ymin = 1, ymax = min(4, yrng[2]), fill = colour.moderate, alpha = 0.5) +
-    annotate(geom = "text", x = xrng[1] + 5, y = 2.5 + (min(4, yrng[2]) - 2.5), hjust = 0, color = colour.moderate, label = "MODERATE") +
+    annotate(geom = "text", x = xrng[1] + 5, y = 1 + (min(4, yrng[2]) - 1) / 2, hjust = 0, color = colour.moderate, label = "MODERATE") +
     annotate(geom = "rect", xmin = xrng[1], xmax = xrng[2], ymin = 4, ymax = min(7, yrng[2]), fill = colour.substantial, alpha = 0.5) +
     annotate(geom = "text", x = xrng[1] + 5, y = 4 + (min(7, yrng[2]) - 4) / 2, hjust = 0, color = colour.substantial, label = "SUBSTANTIAL") +
     annotate(geom = "rect", xmin = xrng[1], xmax = xrng[2], ymin = min(7, yrng[2]), ymax = yrng[2], fill = colour.widespread, alpha = 0.5) +
