@@ -3,6 +3,8 @@ title: "Covid-19 cases in England"
 output: 
   html_document:
     toc: true
+    mathjax: null
+    self_contained: false
 params:
   covid19_data_url: "https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv"
   region_lookup_url: "https://opendata.arcgis.com/datasets/3ba3daf9278f47daba0f561889c3521a_0.csv"
