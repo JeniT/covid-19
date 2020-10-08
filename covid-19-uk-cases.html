@@ -206,7 +206,7 @@ summary {
 
 <p>This analysis looks at the figures for Covid-19 cases in England. It’s a little dig into what this data can - and can’t - tell us. The <a href="https://github.com/JeniT/covid-19/blob/master/covid19-cases-england-local-authorities.Rmd">source code is available on Github</a>.</p>
 <p>The data is from <a href="https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv" class="uri">https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv</a> and reports “lab-confirmed positive COVID-19 PCR test on or up to the specimen date”. The specimen date is the date that someone had the test taken, and it can take a number of days to process the test and to report the result. That has some implications about the numbers from more recent days, which we’ll come back to later. The official site has <a href="https://coronavirus.data.gov.uk/about-data#daily-and-cumulative-numbers-of-cases">more details about the meaning of case numbers</a>.</p>
-<p>The most recent data shown here is from 2020-10-03. This data is quite big: it contains 100545 rows and 7 columns. That’s why we’re processing it in R rather than a Google Spreadsheet or Excel.</p>
+<p>The most recent data shown here is from 2020-10-07. This data is quite big: it contains 102441 rows and 7 columns. That’s why we’re processing it in R rather than a Google Spreadsheet or Excel.</p>
 <p>Let’s take a look at the first five lines.</p>
 <table>
 <caption>Confirmed Covid-19 cases in England</caption>
@@ -226,50 +226,111 @@ summary {
 <td align="left">Adur</td>
 <td align="left">E07000223</td>
 <td align="left">ltla</td>
-<td align="left">2020-10-03</td>
+<td align="left">2020-10-07</td>
 <td align="right">0</td>
-<td align="right">263</td>
-<td align="right">409.0</td>
+<td align="right">271</td>
+<td align="right">421.5</td>
 </tr>
 <tr class="even">
 <td align="left">Adur</td>
 <td align="left">E07000223</td>
 <td align="left">ltla</td>
-<td align="left">2020-10-02</td>
-<td align="right">1</td>
-<td align="right">263</td>
-<td align="right">409.0</td>
+<td align="left">2020-10-06</td>
+<td align="right">0</td>
+<td align="right">271</td>
+<td align="right">421.5</td>
 </tr>
 <tr class="odd">
 <td align="left">Adur</td>
 <td align="left">E07000223</td>
 <td align="left">ltla</td>
-<td align="left">2020-10-01</td>
-<td align="right">2</td>
-<td align="right">262</td>
-<td align="right">407.5</td>
+<td align="left">2020-10-05</td>
+<td align="right">0</td>
+<td align="right">271</td>
+<td align="right">421.5</td>
 </tr>
 <tr class="even">
 <td align="left">Adur</td>
 <td align="left">E07000223</td>
 <td align="left">ltla</td>
-<td align="left">2020-09-30</td>
+<td align="left">2020-10-04</td>
 <td align="right">3</td>
-<td align="right">260</td>
-<td align="right">404.3</td>
+<td align="right">271</td>
+<td align="right">421.5</td>
 </tr>
 <tr class="odd">
 <td align="left">Adur</td>
 <td align="left">E07000223</td>
 <td align="left">ltla</td>
-<td align="left">2020-09-29</td>
-<td align="right">2</td>
-<td align="right">257</td>
-<td align="right">399.7</td>
+<td align="left">2020-10-03</td>
+<td align="right">3</td>
+<td align="right">268</td>
+<td align="right">416.8</td>
 </tr>
 </tbody>
 </table>
 <p>Sometimes this data seems to contain no information for the most recent date. This manifests itself in the data when the number of daily cases given for England is zero (which you wouldn’t expect unless we had really reached zero cases across the country, which is unlikely to happen any time soon). In these cases, we’re going to remove the data from the most recent date (all of which are zeros) because it is inaccurate and throws off the rest of the calculations.</p>
+<table>
+<caption>Confirmed Covid-19 cases in England</caption>
+<thead>
+<tr class="header">
+<th align="left">AreaName</th>
+<th align="left">AreaCode</th>
+<th align="left">AreaType</th>
+<th align="left">Date</th>
+<th align="right">DailyCases</th>
+<th align="right">CumulativeCases</th>
+<th align="right">CumulativeRate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Adur</td>
+<td align="left">E07000223</td>
+<td align="left">ltla</td>
+<td align="left">2020-10-06</td>
+<td align="right">0</td>
+<td align="right">271</td>
+<td align="right">421.5</td>
+</tr>
+<tr class="even">
+<td align="left">Adur</td>
+<td align="left">E07000223</td>
+<td align="left">ltla</td>
+<td align="left">2020-10-05</td>
+<td align="right">0</td>
+<td align="right">271</td>
+<td align="right">421.5</td>
+</tr>
+<tr class="odd">
+<td align="left">Adur</td>
+<td align="left">E07000223</td>
+<td align="left">ltla</td>
+<td align="left">2020-10-04</td>
+<td align="right">3</td>
+<td align="right">271</td>
+<td align="right">421.5</td>
+</tr>
+<tr class="even">
+<td align="left">Adur</td>
+<td align="left">E07000223</td>
+<td align="left">ltla</td>
+<td align="left">2020-10-03</td>
+<td align="right">3</td>
+<td align="right">268</td>
+<td align="right">416.8</td>
+</tr>
+<tr class="odd">
+<td align="left">Adur</td>
+<td align="left">E07000223</td>
+<td align="left">ltla</td>
+<td align="left">2020-10-02</td>
+<td align="right">0</td>
+<td align="right">265</td>
+<td align="right">412.1</td>
+</tr>
+</tbody>
+</table>
 <p>As you can see, the data contains information about various different types of areas. Let’s get a list of the different types:</p>
 <ul>
 <li>ltla</li>
@@ -294,42 +355,42 @@ summary {
 <tr class="odd">
 <td align="left">Adur</td>
 <td align="left">E07000223</td>
-<td align="left">2020-10-03</td>
+<td align="left">2020-10-06</td>
 <td align="right">0</td>
-<td align="right">263</td>
-<td align="right">409.0</td>
+<td align="right">271</td>
+<td align="right">421.5</td>
 </tr>
 <tr class="even">
 <td align="left">Allerdale</td>
 <td align="left">E07000026</td>
-<td align="left">2020-10-03</td>
+<td align="left">2020-10-06</td>
 <td align="right">0</td>
-<td align="right">534</td>
-<td align="right">546.2</td>
+<td align="right">567</td>
+<td align="right">580.0</td>
 </tr>
 <tr class="odd">
 <td align="left">Amber Valley</td>
 <td align="left">E07000032</td>
-<td align="left">2020-10-03</td>
+<td align="left">2020-10-06</td>
 <td align="right">0</td>
-<td align="right">698</td>
-<td align="right">544.7</td>
+<td align="right">746</td>
+<td align="right">582.1</td>
 </tr>
 <tr class="even">
 <td align="left">Arun</td>
 <td align="left">E07000224</td>
-<td align="left">2020-10-03</td>
+<td align="left">2020-10-06</td>
 <td align="right">0</td>
-<td align="right">470</td>
-<td align="right">292.4</td>
+<td align="right">484</td>
+<td align="right">301.1</td>
 </tr>
 <tr class="odd">
 <td align="left">Ashfield</td>
 <td align="left">E07000170</td>
-<td align="left">2020-10-03</td>
+<td align="left">2020-10-06</td>
 <td align="right">0</td>
-<td align="right">863</td>
-<td align="right">674.7</td>
+<td align="right">918</td>
+<td align="right">717.6</td>
 </tr>
 </tbody>
 </table>
@@ -364,50 +425,50 @@ summary {
 <td align="left">E12000008</td>
 <td align="left">Adur</td>
 <td align="left">E07000223</td>
-<td align="left">2020-10-03</td>
+<td align="left">2020-10-06</td>
 <td align="right">0</td>
-<td align="right">263</td>
-<td align="right">409.0</td>
+<td align="right">271</td>
+<td align="right">421.5</td>
 </tr>
 <tr class="even">
 <td align="left">North West</td>
 <td align="left">E12000002</td>
 <td align="left">Allerdale</td>
 <td align="left">E07000026</td>
-<td align="left">2020-10-03</td>
+<td align="left">2020-10-06</td>
 <td align="right">0</td>
-<td align="right">534</td>
-<td align="right">546.2</td>
+<td align="right">567</td>
+<td align="right">580.0</td>
 </tr>
 <tr class="odd">
 <td align="left">East Midlands</td>
 <td align="left">E12000004</td>
 <td align="left">Amber Valley</td>
 <td align="left">E07000032</td>
-<td align="left">2020-10-03</td>
+<td align="left">2020-10-06</td>
 <td align="right">0</td>
-<td align="right">698</td>
-<td align="right">544.7</td>
+<td align="right">746</td>
+<td align="right">582.1</td>
 </tr>
 <tr class="even">
 <td align="left">South East</td>
 <td align="left">E12000008</td>
 <td align="left">Arun</td>
 <td align="left">E07000224</td>
-<td align="left">2020-10-03</td>
+<td align="left">2020-10-06</td>
 <td align="right">0</td>
-<td align="right">470</td>
-<td align="right">292.4</td>
+<td align="right">484</td>
+<td align="right">301.1</td>
 </tr>
 <tr class="odd">
 <td align="left">East Midlands</td>
 <td align="left">E12000004</td>
 <td align="left">Ashfield</td>
 <td align="left">E07000170</td>
-<td align="left">2020-10-03</td>
+<td align="left">2020-10-06</td>
 <td align="right">0</td>
-<td align="right">863</td>
-<td align="right">674.7</td>
+<td align="right">918</td>
+<td align="right">717.6</td>
 </tr>
 </tbody>
 </table>
@@ -445,50 +506,50 @@ summary {
 <td align="left">E12000002</td>
 <td align="left">Manchester</td>
 <td align="left">E08000003</td>
-<td align="left">2020-10-03</td>
-<td align="right">2</td>
-<td align="right">9824</td>
-<td align="right">1776.9</td>
+<td align="left">2020-10-06</td>
+<td align="right">11</td>
+<td align="right">11157</td>
+<td align="right">2018.1</td>
 </tr>
 <tr class="even">
+<td align="left">North West</td>
+<td align="left">E12000002</td>
+<td align="left">Manchester</td>
+<td align="left">E08000003</td>
+<td align="left">2020-10-05</td>
+<td align="right">280</td>
+<td align="right">11146</td>
+<td align="right">2016.1</td>
+</tr>
+<tr class="odd">
+<td align="left">North West</td>
+<td align="left">E12000002</td>
+<td align="left">Manchester</td>
+<td align="left">E08000003</td>
+<td align="left">2020-10-04</td>
+<td align="right">237</td>
+<td align="right">10866</td>
+<td align="right">1965.4</td>
+</tr>
+<tr class="even">
+<td align="left">North West</td>
+<td align="left">E12000002</td>
+<td align="left">Manchester</td>
+<td align="left">E08000003</td>
+<td align="left">2020-10-03</td>
+<td align="right">314</td>
+<td align="right">10629</td>
+<td align="right">1922.6</td>
+</tr>
+<tr class="odd">
 <td align="left">North West</td>
 <td align="left">E12000002</td>
 <td align="left">Manchester</td>
 <td align="left">E08000003</td>
 <td align="left">2020-10-02</td>
-<td align="right">132</td>
-<td align="right">9822</td>
-<td align="right">1776.6</td>
-</tr>
-<tr class="odd">
-<td align="left">North West</td>
-<td align="left">E12000002</td>
-<td align="left">Manchester</td>
-<td align="left">E08000003</td>
-<td align="left">2020-10-01</td>
-<td align="right">391</td>
-<td align="right">9690</td>
-<td align="right">1752.7</td>
-</tr>
-<tr class="even">
-<td align="left">North West</td>
-<td align="left">E12000002</td>
-<td align="left">Manchester</td>
-<td align="left">E08000003</td>
-<td align="left">2020-09-30</td>
-<td align="right">560</td>
-<td align="right">9299</td>
-<td align="right">1682.0</td>
-</tr>
-<tr class="odd">
-<td align="left">North West</td>
-<td align="left">E12000002</td>
-<td align="left">Manchester</td>
-<td align="left">E08000003</td>
-<td align="left">2020-09-29</td>
-<td align="right">495</td>
-<td align="right">8739</td>
-<td align="right">1580.7</td>
+<td align="right">439</td>
+<td align="right">10315</td>
+<td align="right">1865.8</td>
 </tr>
 </tbody>
 </table>
@@ -509,54 +570,54 @@ summary {
 </thead>
 <tbody>
 <tr class="odd">
+<td align="left">2020-10-06</td>
+<td align="right">11</td>
+<td align="right">210.5000</td>
+</tr>
+<tr class="even">
+<td align="left">2020-10-05</td>
+<td align="right">280</td>
+<td align="right">256.2000</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-10-04</td>
+<td align="right">237</td>
+<td align="right">292.0000</td>
+</tr>
+<tr class="even">
 <td align="left">2020-10-03</td>
-<td align="right">2</td>
-<td align="right">271.2500</td>
+<td align="right">314</td>
+<td align="right">334.5714</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">2020-10-02</td>
-<td align="right">132</td>
-<td align="right">316.0000</td>
+<td align="right">439</td>
+<td align="right">404.7143</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">2020-10-01</td>
-<td align="right">391</td>
-<td align="right">336.3333</td>
+<td align="right">471</td>
+<td align="right">427.7143</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">2020-09-30</td>
-<td align="right">560</td>
-<td align="right">345.4286</td>
-</tr>
-<tr class="odd">
-<td align="left">2020-09-29</td>
-<td align="right">495</td>
-<td align="right">375.7143</td>
+<td align="right">590</td>
+<td align="right">451.0000</td>
 </tr>
 <tr class="even">
-<td align="left">2020-09-28</td>
-<td align="right">438</td>
-<td align="right">391.4286</td>
+<td align="left">2020-09-29</td>
+<td align="right">502</td>
+<td align="right">440.0000</td>
 </tr>
 <tr class="odd">
+<td align="left">2020-09-28</td>
+<td align="right">441</td>
+<td align="right">417.1429</td>
+</tr>
+<tr class="even">
 <td align="left">2020-09-27</td>
 <td align="right">400</td>
-<td align="right">369.1429</td>
-</tr>
-<tr class="even">
-<td align="left">2020-09-26</td>
-<td align="right">214</td>
-<td align="right">322.2857</td>
-</tr>
-<tr class="odd">
-<td align="left">2020-09-25</td>
-<td align="right">242</td>
-<td align="right">277.7143</td>
-</tr>
-<tr class="even">
-<td align="left">2020-09-24</td>
-<td align="right">235</td>
-<td align="right">233.1429</td>
+<td align="right">383.8571</td>
 </tr>
 </tbody>
 </table>
@@ -649,34 +710,34 @@ summary {
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">2020-10-02</td>
-<td align="right">59893</td>
-<td align="right">143215</td>
-<td align="right">5282</td>
+<td align="left">2020-10-07</td>
+<td align="right">64415</td>
+<td align="right">138045</td>
+<td align="right">4473</td>
 </tr>
 <tr class="even">
-<td align="left">2020-10-01</td>
-<td align="right">64941</td>
-<td align="right">139425</td>
-<td align="right">5705</td>
+<td align="left">2020-10-06</td>
+<td align="right">49364</td>
+<td align="right">151774</td>
+<td align="right">3483</td>
 </tr>
 <tr class="odd">
-<td align="left">2020-09-30</td>
-<td align="right">58870</td>
-<td align="right">120666</td>
-<td align="right">5088</td>
+<td align="left">2020-10-05</td>
+<td align="right">45225</td>
+<td align="right">144926</td>
+<td align="right">1275</td>
 </tr>
 <tr class="even">
-<td align="left">2020-09-29</td>
-<td align="right">50533</td>
-<td align="right">119633</td>
-<td align="right">3786</td>
+<td align="left">2020-10-04</td>
+<td align="right">53368</td>
+<td align="right">170881</td>
+<td align="right">1944</td>
 </tr>
 <tr class="odd">
-<td align="left">2020-09-28</td>
-<td align="right">48428</td>
-<td align="right">148897</td>
-<td align="right">1154</td>
+<td align="left">2020-10-03</td>
+<td align="right">60688</td>
+<td align="right">147368</td>
+<td align="right">6411</td>
 </tr>
 </tbody>
 </table>
@@ -728,59 +789,59 @@ summary {
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">2020-10-02</td>
-<td align="right">83299</td>
-<td align="right">213400</td>
+<td align="left">2020-10-07</td>
+<td align="right">83070</td>
+<td align="right">220000</td>
 <td align="right">120000</td>
-<td align="right">14689</td>
-<td align="right">70429</td>
-<td align="right">168669</td>
-<td align="right">5282</td>
-<td align="right">27172</td>
+<td align="right">4203</td>
+<td align="right">76527</td>
+<td align="right">163589</td>
+<td align="right">4473</td>
+<td align="right">21220</td>
 </tr>
 <tr class="even">
-<td align="left">2020-10-01</td>
-<td align="right">83393</td>
-<td align="right">227600</td>
+<td align="left">2020-10-06</td>
+<td align="right">82587</td>
+<td align="right">220000</td>
 <td align="right">120000</td>
-<td align="right">13532</td>
-<td align="right">77402</td>
-<td align="right">156459</td>
-<td align="right">5705</td>
-<td align="right">22232</td>
+<td align="right">12315</td>
+<td align="right">58387</td>
+<td align="right">174251</td>
+<td align="right">3483</td>
+<td align="right">40482</td>
 </tr>
 <tr class="odd">
-<td align="left">2020-09-30</td>
-<td align="right">83299</td>
-<td align="right">205600</td>
+<td align="left">2020-10-05</td>
+<td align="right">79547</td>
+<td align="right">219000</td>
 <td align="right">120000</td>
-<td align="right">9013</td>
-<td align="right">69549</td>
-<td align="right">141378</td>
-<td align="right">5088</td>
-<td align="right">21285</td>
+<td align="right">4703</td>
+<td align="right">53982</td>
+<td align="right">169488</td>
+<td align="right">1275</td>
+<td align="right">26878</td>
 </tr>
 <tr class="even">
-<td align="left">2020-09-29</td>
-<td align="right">83090</td>
-<td align="right">204600</td>
+<td align="left">2020-10-04</td>
+<td align="right">80497</td>
+<td align="right">215000</td>
 <td align="right">120000</td>
-<td align="right">17194</td>
-<td align="right">57960</td>
-<td align="right">140442</td>
-<td align="right">3786</td>
-<td align="right">29735</td>
+<td align="right">10171</td>
+<td align="right">63888</td>
+<td align="right">189095</td>
+<td align="right">1944</td>
+<td align="right">33819</td>
 </tr>
 <tr class="odd">
-<td align="left">2020-09-28</td>
-<td align="right">80215</td>
-<td align="right">188600</td>
+<td align="left">2020-10-03</td>
+<td align="right">83299</td>
+<td align="right">213850</td>
 <td align="right">120000</td>
-<td align="right">22684</td>
-<td align="right">56615</td>
-<td align="right">170285</td>
-<td align="right">1154</td>
-<td align="right">39384</td>
+<td align="right">9831</td>
+<td align="right">72038</td>
+<td align="right">177562</td>
+<td align="right">6411</td>
+<td align="right">20729</td>
 </tr>
 </tbody>
 </table>
@@ -810,74 +871,74 @@ summary {
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">Nottingham</td>
-<td align="left">2020-10-03</td>
-<td align="right">186.00</td>
-<td align="right">332900</td>
-<td align="right">55.87263</td>
-</tr>
-<tr class="even">
 <td align="left">Knowsley</td>
-<td align="left">2020-10-03</td>
-<td align="right">83.50</td>
+<td align="left">2020-10-06</td>
+<td align="right">77.25</td>
 <td align="right">150862</td>
-<td align="right">55.34860</td>
-</tr>
-<tr class="odd">
-<td align="left">Manchester</td>
-<td align="left">2020-10-03</td>
-<td align="right">271.25</td>
-<td align="right">552858</td>
-<td align="right">49.06323</td>
+<td align="right">51.20574</td>
 </tr>
 <tr class="even">
-<td align="left">Liverpool</td>
-<td align="left">2020-10-03</td>
-<td align="right">226.75</td>
-<td align="right">498042</td>
-<td align="right">45.52829</td>
-</tr>
-<tr class="odd">
 <td align="left">Newcastle upon Tyne</td>
-<td align="left">2020-10-03</td>
-<td align="right">136.25</td>
+<td align="left">2020-10-06</td>
+<td align="right">151.50</td>
 <td align="right">302820</td>
-<td align="right">44.99373</td>
-</tr>
-<tr class="even">
-<td align="left">Exeter</td>
-<td align="left">2020-10-03</td>
-<td align="right">41.00</td>
-<td align="right">131405</td>
-<td align="right">31.20125</td>
+<td align="right">50.02972</td>
 </tr>
 <tr class="odd">
-<td align="left">Leeds</td>
-<td align="left">2020-10-03</td>
-<td align="right">242.50</td>
-<td align="right">793139</td>
-<td align="right">30.57472</td>
+<td align="left">Liverpool</td>
+<td align="left">2020-10-06</td>
+<td align="right">228.00</td>
+<td align="right">498042</td>
+<td align="right">45.77927</td>
 </tr>
 <tr class="even">
-<td align="left">Sefton</td>
-<td align="left">2020-10-03</td>
-<td align="right">82.75</td>
-<td align="right">276410</td>
-<td align="right">29.93741</td>
+<td align="left">Manchester</td>
+<td align="left">2020-10-06</td>
+<td align="right">210.50</td>
+<td align="right">552858</td>
+<td align="right">38.07488</td>
 </tr>
 <tr class="odd">
-<td align="left">Sheffield</td>
-<td align="left">2020-10-03</td>
-<td align="right">174.75</td>
-<td align="right">584853</td>
-<td align="right">29.87930</td>
+<td align="left">Nottingham</td>
+<td align="left">2020-10-06</td>
+<td align="right">118.50</td>
+<td align="right">332900</td>
+<td align="right">35.59628</td>
+</tr>
+<tr class="even">
+<td align="left">Burnley</td>
+<td align="left">2020-10-06</td>
+<td align="right">31.25</td>
+<td align="right">88920</td>
+<td align="right">35.14395</td>
+</tr>
+<tr class="odd">
+<td align="left">Halton</td>
+<td align="left">2020-10-06</td>
+<td align="right">44.50</td>
+<td align="right">129410</td>
+<td align="right">34.38683</td>
 </tr>
 <tr class="even">
 <td align="left">Rochdale</td>
-<td align="left">2020-10-03</td>
-<td align="right">64.75</td>
+<td align="left">2020-10-06</td>
+<td align="right">73.50</td>
 <td align="right">222412</td>
-<td align="right">29.11264</td>
+<td align="right">33.04678</td>
+</tr>
+<tr class="odd">
+<td align="left">St. Helens</td>
+<td align="left">2020-10-06</td>
+<td align="right">57.00</td>
+<td align="right">180585</td>
+<td align="right">31.56408</td>
+</tr>
+<tr class="even">
+<td align="left">Sheffield</td>
+<td align="left">2020-10-06</td>
+<td align="right">183.75</td>
+<td align="right">584853</td>
+<td align="right">31.41815</td>
 </tr>
 </tbody>
 </table>
@@ -891,7 +952,7 @@ summary {
 <p>As discussed, it is possible to reduce the number of new cases in the data by simply not testing as many people. In the UK, testing capacity is probably not limited in this way, but there isn’t enough granularity in the public testing figures to be able to tell. Regardless, the figures above give a rough indication of how concerned to be about the level of infection in an area.</p>
 <p>We’ll try to plot these on a map. There’s a great <a href="https://rforjournalists.com/2019/10/20/how-to-make-a-uk-local-authority-choropleth-map-in-r/">tutorial for this</a> which we’ll just follow. We’re using <a href="https://geoportal.statistics.gov.uk/datasets/local-authority-districts-april-2019-uk-buc">ultra generalised 2019 boundaries from ONS</a>, which like the population data we’ve downloaded locally into a folder.</p>
 <p>First we load the shape file and ensure that it knows what regions we’re using from it.</p>
-<p>Then we filter the local authority data to the most recent date (2020-10-03) and retain only area code and the average daily rate. This is the data that’s relevant for the map.</p>
+<p>Then we filter the local authority data to the most recent date (2020-10-06) and retain only area code and the average daily rate. This is the data that’s relevant for the map.</p>
 <p>Then we merge the map data into the shape data and plot the map.</p>
 <p><img src="covid-19-uk-cases_files/figure-html/display%20map-1.png" width="672" /></p>
 <p>This highlights some areas that have high rates of cases, but unless you’re great at UK geography you might struggle to name them. So we’ll move on to look at some individually in a bit.</p>
@@ -963,10 +1024,10 @@ summary {
 <caption>Identifying trend in Manchester</caption>
 <colgroup>
 <col width="11%" />
-<col width="12%" />
+<col width="10%" />
 <col width="17%" />
-<col width="28%" />
-<col width="30%" />
+<col width="29%" />
+<col width="31%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -979,274 +1040,294 @@ summary {
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">2020-10-03</td>
-<td align="right">0.3617565</td>
-<td align="right">49.06323</td>
-<td align="right">-0.16</td>
-<td align="right">-0.08</td>
+<td align="left">2020-10-06</td>
+<td align="right">1.989661</td>
+<td align="right">38.07488</td>
+<td align="right">-0.22</td>
+<td align="right">-0.18</td>
 </tr>
 <tr class="even">
+<td align="left">2020-10-05</td>
+<td align="right">50.645916</td>
+<td align="right">46.34101</td>
+<td align="right">-0.14</td>
+<td align="right">-0.16</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-10-04</td>
+<td align="right">42.868151</td>
+<td align="right">52.81646</td>
+<td align="right">-0.15</td>
+<td align="right">-0.14</td>
+</tr>
+<tr class="even">
+<td align="left">2020-10-03</td>
+<td align="right">56.795778</td>
+<td align="right">60.51670</td>
+<td align="right">-0.21</td>
+<td align="right">-0.12</td>
+</tr>
+<tr class="odd">
 <td align="left">2020-10-02</td>
-<td align="right">23.8759320</td>
-<td align="right">57.15753</td>
+<td align="right">79.405562</td>
+<td align="right">73.20402</td>
 <td align="right">-0.06</td>
 <td align="right">-0.08</td>
-</tr>
-<tr class="odd">
-<td align="left">2020-10-01</td>
-<td align="right">70.7234046</td>
-<td align="right">60.83539</td>
-<td align="right">-0.03</td>
-<td align="right">-0.05</td>
-</tr>
-<tr class="even">
-<td align="left">2020-09-30</td>
-<td align="right">101.2918326</td>
-<td align="right">62.48052</td>
-<td align="right">-0.09</td>
-<td align="right">-0.03</td>
-</tr>
-<tr class="odd">
-<td align="left">2020-09-29</td>
-<td align="right">89.5347449</td>
-<td align="right">67.95855</td>
-<td align="right">-0.04</td>
-<td align="right">0.02</td>
 </tr>
 </tbody>
 </table>
 <p>Now let’s narrow down to places that have seen concerning levels of cases over the last week.</p>
 <div id="widespread-infection" class="section level3">
 <h3>Widespread infection</h3>
-<p>The most recent date is 2020-10-03 so one week ago is 2020-09-27. First let’s look at those who had widespread daily rates (over 7 cases / day / 100,000 population) at some point in the last week.</p>
-<p>There are 145 areas where there is widespread infection, 95 of which aren’t currently in lockdown. Those are:</p>
+<p>The most recent date is 2020-10-06 so one week ago is 2020-09-30. First let’s look at those who had widespread daily rates (over 7 cases / day / 100,000 population) at some point in the last week.</p>
+<p>There are 204 areas where there is widespread infection, 154 of which aren’t currently in lockdown. Those are:</p>
 <ul>
 <li>Nottingham</li>
 <li>Sheffield</li>
 <li>Exeter</li>
 <li>Stockton-on-Tees</li>
-<li>Darlington</li>
-<li>Barrow-in-Furness</li>
 <li>Rotherham</li>
+<li>Barrow-in-Furness</li>
+<li>York</li>
 <li>Rushcliffe</li>
-<li>Craven</li>
+<li>Darlington</li>
 <li>Redcar and Cleveland</li>
 <li>Broxtowe</li>
-<li>York</li>
-<li>Newark and Sherwood</li>
 <li>Wakefield</li>
-<li>Richmondshire</li>
+<li>Craven</li>
 <li>Barnsley</li>
 <li>Cheshire West and Chester</li>
-<li>Cheshire East</li>
-<li>Oxford</li>
-<li>Stafford</li>
 <li>Doncaster</li>
-<li>Gedling</li>
-<li>Walsall</li>
-<li>Harrogate</li>
-<li>Hambleton</li>
-<li>Great Yarmouth</li>
+<li>Cheshire East</li>
 <li>High Peak</li>
-<li>Newcastle-under-Lyme</li>
-<li>East Riding of Yorkshire</li>
-<li>Charnwood</li>
-<li>Coventry</li>
-<li>Redbridge</li>
-<li>Hackney and City of London</li>
-<li>Scarborough</li>
-<li>Bromsgrove</li>
-<li>Richmond upon Thames</li>
-<li>South Staffordshire</li>
-<li>Lincoln</li>
-<li>Melton</li>
+<li>Gedling</li>
 <li>North East Derbyshire</li>
+<li>Walsall</li>
+<li>Richmondshire</li>
 <li>South Lakeland</li>
-<li>Blaby</li>
-<li>Slough</li>
-<li>Erewash</li>
-<li>Ashfield</li>
-<li>Haringey</li>
-<li>Kingston upon Hull, City of</li>
-<li>Ryedale</li>
+<li>Newark and Sherwood</li>
+<li>Harrogate</li>
+<li>Newcastle-under-Lyme</li>
+<li>Oxford</li>
+<li>Rutland</li>
+<li>Stafford</li>
+<li>Hambleton</li>
+<li>East Riding of Yorkshire</li>
+<li>Bromsgrove</li>
+<li>Redbridge</li>
+<li>Richmond upon Thames</li>
 <li>West Lindsey</li>
-<li>Selby</li>
-<li>Ealing</li>
-<li>Bassetlaw</li>
-<li>Newham</li>
-<li>Dudley</li>
+<li>Ryedale</li>
+<li>Coventry</li>
+<li>Charnwood</li>
+<li>Ashfield</li>
 <li>Hertsmere</li>
-<li>Rugby</li>
 <li>Elmbridge</li>
-<li>Tower Hamlets</li>
-<li>East Northamptonshire</li>
+<li>Hackney and City of London</li>
+<li>Erewash</li>
 <li>North Lincolnshire</li>
-<li>Hounslow</li>
-<li>Worcester</li>
-<li>Derby</li>
-<li>Barnet</li>
-<li>Barking and Dagenham</li>
-<li>Allerdale</li>
-<li>Islington</li>
+<li>Scarborough</li>
+<li>Ealing</li>
+<li>Kingston upon Hull, City of</li>
+<li>Blaby</li>
+<li>Bassetlaw</li>
+<li>Haringey</li>
+<li>South Staffordshire</li>
 <li>Harrow</li>
-<li>Brent</li>
-<li>Harborough</li>
+<li>Selby</li>
+<li>Great Yarmouth</li>
+<li>Tower Hamlets</li>
+<li>Lincoln</li>
 <li>Lichfield</li>
-<li>Havering</li>
-<li>Amber Valley</li>
-<li>Uttlesford</li>
-<li>Stoke-on-Trent</li>
-<li>Hammersmith and Fulham</li>
-<li>Telford and Wrekin</li>
-<li>Hinckley and Bosworth</li>
-<li>Luton</li>
-<li>Waltham Forest</li>
-<li>St Albans</li>
-<li>Enfield</li>
-<li>Nuneaton and Bedworth</li>
+<li>Chesterfield</li>
+<li>Rugby</li>
+<li>East Northamptonshire</li>
+<li>Slough</li>
+<li>Barnet</li>
+<li>Hounslow</li>
+<li>Harborough</li>
 <li>Windsor and Maidenhead</li>
 <li>Brentwood</li>
-<li>Wychavon</li>
-<li>Bedford</li>
-<li>Lambeth</li>
-<li>South Derbyshire</li>
-<li>Shropshire</li>
-<li>Watford</li>
-<li>Epping Forest</li>
+<li>Melton</li>
+<li>Uttlesford</li>
 <li>East Hertfordshire</li>
+<li>Derby</li>
+<li>Amber Valley</li>
+<li>Brent</li>
+<li>Islington</li>
+<li>Dudley</li>
+<li>Three Rivers</li>
+<li>Hammersmith and Fulham</li>
+<li>Stratford-on-Avon</li>
+<li>Waltham Forest</li>
+<li>Kensington and Chelsea</li>
+<li>Lambeth</li>
 <li>Hillingdon</li>
+<li>Newham</li>
 <li>South Kesteven</li>
+<li>North East Lincolnshire</li>
+<li>Cannock Chase</li>
+<li>Kingston upon Thames</li>
+<li>Bedford</li>
+<li>St Albans</li>
+<li>Enfield</li>
+<li>Worcester</li>
+<li>Hinckley and Bosworth</li>
+<li>Wyre Forest</li>
+<li>Bournemouth, Christchurch and Poole</li>
+<li>Bolsover</li>
+<li>Nuneaton and Bedworth</li>
+<li>Westminster</li>
+<li>Woking</li>
+<li>Guildford</li>
+<li>Spelthorne</li>
+<li>Epping Forest</li>
+<li>Wandsworth</li>
+<li>Waverley</li>
+<li>Staffordshire Moorlands</li>
+<li>Derbyshire Dales</li>
+<li>Allerdale</li>
+<li>South Derbyshire</li>
+<li>Watford</li>
+<li>Stoke-on-Trent</li>
+<li>Tamworth</li>
+<li>Croydon</li>
+<li>Mansfield</li>
+<li>Epsom and Ewell</li>
+<li>Basildon</li>
+<li>Kettering</li>
+<li>Bristol, City of</li>
+<li>Lewisham</li>
+<li>Rushmoor</li>
+<li>Barking and Dagenham</li>
+<li>Luton</li>
+<li>Brighton and Hove</li>
+<li>Runnymede</li>
+<li>Warwick</li>
+<li>Bath and North East Somerset</li>
+<li>Mole Valley</li>
+<li>Malvern Hills</li>
+<li>Sevenoaks</li>
+<li>Shropshire</li>
+<li>Wychavon</li>
+<li>Southwark</li>
+<li>Dacorum</li>
+<li>Peterborough</li>
+<li>Havering</li>
+<li>Daventry</li>
+<li>South Gloucestershire</li>
+<li>Redditch</li>
+<li>Northampton</li>
+<li>Bromley</li>
+<li>North Warwickshire</li>
+<li>Telford and Wrekin</li>
+<li>Carlisle</li>
+<li>North Kesteven</li>
+<li>South Oxfordshire</li>
+<li>Bexley</li>
+<li>Surrey Heath</li>
+<li>Wellingborough</li>
+<li>Tunbridge Wells</li>
+<li>Camden</li>
+<li>East Staffordshire</li>
+<li>Cherwell</li>
+<li>South Cambridgeshire</li>
+<li>North Hertfordshire</li>
+<li>Vale of White Horse</li>
+<li>Tandridge</li>
+<li>Copeland</li>
 </ul>
 <p>Now we’ll create charts for those places where there is widespread infection that do not currently have additional restrictions (some of which might be duplicates of the graphs above, because they previously did have local restrictions):</p>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-1.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-2.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-3.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-4.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-5.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-6.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-7.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-8.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-9.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-10.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-11.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-12.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-13.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-14.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-15.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-16.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-17.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-18.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-19.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-20.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-21.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-22.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-23.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-24.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-25.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-26.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-27.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-28.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-29.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-30.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-31.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-32.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-33.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-34.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-35.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-36.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-37.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-38.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-39.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-40.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-41.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-42.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-43.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-44.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-45.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-46.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-47.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-48.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-49.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-50.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-51.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-52.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-53.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-54.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-55.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-56.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-57.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-58.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-59.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-60.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-61.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-62.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-63.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-64.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-65.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-66.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-67.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-68.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-69.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-70.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-71.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-72.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-73.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-74.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-75.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-76.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-77.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-78.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-79.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-80.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-81.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-82.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-83.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-84.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-85.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-86.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-87.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-88.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-89.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-90.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-91.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-92.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-93.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-94.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-95.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-1.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-2.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-3.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-4.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-5.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-6.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-7.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-8.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-9.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-10.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-11.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-12.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-13.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-14.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-15.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-16.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-17.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-18.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-19.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-20.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-21.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-22.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-23.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-24.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-25.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-26.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-27.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-28.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-29.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-30.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-31.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-32.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-33.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-34.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-35.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-36.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-37.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-38.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-39.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-40.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-41.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-42.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-43.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-44.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-45.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-46.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-47.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-48.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-49.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-50.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-51.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-52.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-53.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-54.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-55.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-56.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-57.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-58.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-59.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-60.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-61.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-62.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-63.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-64.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-65.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-66.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-67.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-68.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-69.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-70.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-71.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-72.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-73.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-74.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-75.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-76.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-77.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-78.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-79.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-80.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-81.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-82.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-83.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-84.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-85.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-86.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-87.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-88.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-89.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-90.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-91.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-92.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-93.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-94.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-95.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-96.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-97.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-98.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-99.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-100.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-101.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-102.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-103.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-104.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-105.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-106.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-107.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-108.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-109.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-110.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-111.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-112.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-113.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-114.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-115.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-116.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-117.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-118.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-119.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-120.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-121.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-122.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-123.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-124.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-125.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-126.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-127.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-128.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-129.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-130.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-131.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-132.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-133.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-134.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-135.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-136.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-137.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-138.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-139.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-140.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-141.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-142.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-143.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-144.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-145.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-146.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-147.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-148.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-149.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-150.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-151.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-152.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-153.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-154.png" width="672" /></p>
 </div>
 <div id="significant-and-increasing-infection" class="section level3">
 <h3>Significant and increasing infection</h3>
 <p>Finally, we’ll make a list of places where there’s been a significant infection (over 4 cases / day / 100,000 population) at some point over the last week <em>and</em> that are seeing increases in those rates.</p>
 <ul>
-<li>Guildford</li>
-<li>Croydon</li>
-<li>Dacorum</li>
-<li>Woking</li>
-<li>Lewisham</li>
-<li>Wandsworth</li>
-<li>Kingston upon Thames</li>
-<li>North East Lincolnshire</li>
-<li>Kensington and Chelsea</li>
-<li>Copeland</li>
-<li>Cannock Chase</li>
-<li>East Staffordshire</li>
-<li>Spelthorne</li>
-<li>Staffordshire Moorlands</li>
-<li>Stratford-on-Avon</li>
-<li>Westminster</li>
-<li>Three Rivers</li>
-<li>Basildon</li>
-<li>Daventry</li>
-<li>Northampton</li>
-<li>Wellingborough</li>
-<li>Kettering</li>
-<li>South Gloucestershire</li>
-<li>Epsom and Ewell</li>
-<li>Huntingdonshire</li>
-<li>Runnymede</li>
-<li>Chesterfield</li>
-<li>Tamworth</li>
-<li>Derbyshire Dales</li>
-<li>Vale of White Horse</li>
-<li>Bristol, City of</li>
-<li>Bexley</li>
-<li>Mole Valley</li>
-<li>South Cambridgeshire</li>
-<li>Bromley</li>
-<li>Brighton and Hove</li>
-<li>Chelmsford</li>
-<li>Southampton</li>
-<li>Winchester</li>
-<li>Tandridge</li>
-<li>Cambridge</li>
-<li>Bournemouth, Christchurch and Poole</li>
-<li>Surrey Heath</li>
-<li>Torbay</li>
-<li>Camden</li>
-<li>Thurrock</li>
-<li>Eden</li>
-<li>South Northamptonshire</li>
-<li>Rushmoor</li>
-<li>North Hertfordshire</li>
-<li>Norwich</li>
-<li>Wokingham</li>
-<li>Somerset West and Taunton</li>
-<li>Gloucester</li>
-<li>Cherwell</li>
 <li>Welwyn Hatfield</li>
-<li>Horsham</li>
-<li>Plymouth</li>
-<li>Sevenoaks</li>
+<li>North West Leicestershire</li>
+<li>Portsmouth</li>
+<li>Cheltenham</li>
+<li>Fenland</li>
+<li>Corby</li>
+<li>Tendring</li>
+<li>Norwich</li>
+<li>Hart</li>
+<li>Teignbridge</li>
+<li>Gravesham</li>
+<li>Test Valley</li>
+<li>East Hampshire</li>
+<li>Bracknell Forest</li>
+<li>South Northamptonshire</li>
+<li>North Somerset</li>
+<li>Swale</li>
+<li>West Suffolk</li>
+<li>Tewkesbury</li>
+<li>Sutton</li>
+<li>Cotswold</li>
+<li>Babergh</li>
+<li>Reigate and Banstead</li>
+<li>East Devon</li>
+<li>Colchester</li>
+<li>Lewes</li>
+<li>East Lindsey</li>
+<li>Tonbridge and Malling</li>
+<li>Medway</li>
+<li>Crawley</li>
+<li>Broadland</li>
 </ul>
 <p>Again we’ll create charts for those places that do not currently have additional restrictions:</p>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-1.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-2.png" width="672" /></p>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-1.png" width="672" /></p>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-2.png" width="672" /></p>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-3.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-4.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-5.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-6.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-7.png" width="672" /></p>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-8.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-9.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-10.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-11.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-12.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-13.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-14.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-15.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-16.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-17.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-18.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-8.png" width="672" /></p>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-19.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-20.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-21.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-22.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-23.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-24.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-25.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-26.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-27.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-28.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-29.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-30.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-9.png" width="672" /></p>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-31.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-32.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-33.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-10.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-11.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-12.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-13.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-14.png" width="672" /></p>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-34.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-35.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-15.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-16.png" width="672" /></p>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-36.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-37.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-38.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-39.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-40.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-17.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-18.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-19.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-20.png" width="672" /></p>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-41.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-21.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-22.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-23.png" width="672" /></p>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-42.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-43.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-44.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-45.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-46.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-24.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-25.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-26.png" width="672" /></p>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-47.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-27.png" width="672" /></p>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-48.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-49.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-50.png" width="672" /></p>
-<pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-51.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-52.png" width="672" /></p>
-<pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-53.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-54.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-55.png" width="672" /></p>
-<pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-56.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-57.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-58.png" width="672" /></p>
-<pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-59.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-28.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-29.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-30.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-31.png" width="672" /></p>
 </div>
 </div>
 <div id="identifying-areas-that-arent-worrying" class="section level2">
 <h2>Identifying areas that aren’t worrying</h2>
 <p>Finally, for comparison, let’s have a look at the ten places with the lowest current average daily rates.</p>
 <ul>
-<li>East Cambridgeshire</li>
+<li>Arun</li>
 <li>Isle of Wight</li>
-<li>Maldon</li>
-<li>Torridge</li>
-<li>Fareham</li>
 <li>Gosport</li>
-<li>North Norfolk</li>
+<li>Folkestone and Hythe</li>
+<li>Mid Devon</li>
+<li>Havant</li>
+<li>Torridge</li>
+<li>Rochford</li>
+<li>Thanet</li>
 <li>Rother</li>
-<li>Boston</li>
-<li>Crawley</li>
 </ul>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-1.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-2.png" width="672" /></p>
-<pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-3.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-1.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-2.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-3.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-4.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-5.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-6.png" width="672" /></p>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_rect).
 
 ## Warning: Removed 1 rows containing missing values (geom_text).
 
 ## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-4.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-7.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-8.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-9.png" width="672" /></p>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-5.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-6.png" width="672" /></p>
-<pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-7.png" width="672" /></p>
-<pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-8.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-9.png" width="672" /><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-10.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-10.png" width="672" /></p>
 </div>
 <div id="areas-of-interest" class="section level2">
 <h2>Areas of interest</h2>
