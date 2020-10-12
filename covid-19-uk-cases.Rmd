@@ -537,7 +537,7 @@ This highlights some areas that have high rates of cases, but unless you're grea
 
 ## Areas where there are or have been government lockdowns
 
-First, we'll have a look at what's going on in the areas where there are or have been government lockdowns. These are listed in the `restrictions` table. We can cycle through them - here we're sorting the areas based on the date the restriction came into force - to take a look at what's happening there.
+First, we'll have a look at what's going on in the areas where there are or have been government lockdowns. These are listed in the `restrictions` table. We can cycle through them - here we're sorting the areas based on the tier of the restriction, then by name - to take a look at what's happening there.
 
 Interesting areas to look at here are:
 
@@ -586,9 +586,26 @@ case_rate_graph = function(area) {
 
 caseAreas = unique(pull(localAuthorityCases, AreaName))
 restrictedAreas = unique(pull(restrictions, AreaName))
-currentRestrictions = unique(pull(filter(restrictions, EndDate >= mostRecentDate), AreaName))
+currentRestrictions = filter(restrictions, EndDate >= mostRecentDate)
+currentRestrictionAreas = unique(pull(currentRestrictions, AreaName))
+```
 
-for (area in currentRestrictions) {
+#### Tier 3 restrictions
+
+```{r tier 3 restrictions}
+tier3Restrictions = unique(pull(filter(currentRestrictions, Tier == 3), AreaName))
+for (area in tier3Restrictions) {
+  if (area %in% caseAreas) {
+    print(case_rate_graph(area))
+  }
+}
+```
+
+#### Tier 2 restrictions
+
+```{r tier 2 restrictions}
+tier2Restrictions = unique(pull(filter(currentRestrictions, Tier == 2), AreaName))
+for (area in tier2Restrictions) {
   if (area %in% caseAreas) {
     print(case_rate_graph(area))
   }
@@ -598,7 +615,7 @@ for (area in currentRestrictions) {
 ### Previous restrictions
 
 ```{r display previously restricted areas}
-previousRestrictions = restrictedAreas[!(restrictedAreas %in% currentRestrictions)]
+previousRestrictions = restrictedAreas[!(restrictedAreas %in% currentRestrictionAreas)]
 
 for (area in previousRestrictions) {
   print(case_rate_graph(area))
@@ -633,7 +650,7 @@ recentCases <- filter(localAuthorityCases, Date > oneWeekAgo)
 widespreadAverageRates <- filter(recentCases, AverageDailyRate >= 7)
 widespreadAreas = unique(pull(arrange(widespreadAverageRates, desc(AverageDailyRate)), AreaName))
 
-unlockedDownAreas = widespreadAreas[!(widespreadAreas %in% currentRestrictions)]
+unlockedDownAreas = widespreadAreas[!(widespreadAreas %in% currentRestrictionAreas)]
 ```
 
 There are `r length(widespreadAreas)` areas where there is widespread infection, `r length(unlockedDownAreas)` of which aren't currently in lockdown. Those are:
@@ -644,7 +661,7 @@ cat(paste("*", unlockedDownAreas), sep="\n")
 
 Now we'll create charts for those places where there is widespread infection that do not currently have additional restrictions (some of which might be duplicates of the graphs above, because they previously did have local restrictions):
 
-```{r graph data for areas with widespread infection rates, results='asis'}
+```{r graph data for areas with widespread infection rates}
 for (area in unlockedDownAreas) {
   print(case_rate_graph(area))
 }
@@ -661,7 +678,7 @@ highAverageRatesAndIncreasing <-
   filter(highAverageRates, AverageRateIncreasePercentage > 0)
 worrisomeAreas = unique(pull(arrange(highAverageRatesAndIncreasing, desc(AverageDailyRate)), AreaName))
 worrisomeAreas = worrisomeAreas[!(worrisomeAreas %in% widespreadAreas)]
-worrisomeAreas = worrisomeAreas[!(worrisomeAreas %in% currentRestrictions)]
+worrisomeAreas = worrisomeAreas[!(worrisomeAreas %in% currentRestrictionAreas)]
 
 # print a list of these areas
 cat(paste("*", worrisomeAreas), sep="\n")
@@ -671,7 +688,7 @@ Again we'll create charts for those places that do not currently have additional
 
 ```{r graph data for worrisome areas}
 for (area in worrisomeAreas) {
-  if (!(area %in% currentRestrictions)) {
+  if (!(area %in% currentRestrictionAreas)) {
     print(case_rate_graph(area))
   }
 }
