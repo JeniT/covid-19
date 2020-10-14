@@ -7,6 +7,7 @@ output:
     self_contained: false
 params:
   covid19_data_url: "https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv"
+  england_data_url: "https://api.coronavirus.data.gov.uk/v1/data?filters=areaType=nation;areaName=England&structure=%7B%22date%22:%22date%22,%22newPillarOneTestsByPublishDate%22:%22newPillarOneTestsByPublishDate%22,%22newPillarTwoTestsByPublishDate%22:%22newPillarTwoTestsByPublishDate%22,%22newPillarThreeTestsByPublishDate%22:%22newPillarThreeTestsByPublishDate%22%7D&format=csv"
   region_lookup_url: "https://opendata.arcgis.com/datasets/3ba3daf9278f47daba0f561889c3521a_0.csv"
   restrictions_data_url: "https://docs.google.com/spreadsheets/d/1HBVmvsQXrkQgySW_OiTQdrS8WGCXqgWnmZ43PPi0XgY/export?format=csv&id=1HBVmvsQXrkQgySW_OiTQdrS8WGCXqgWnmZ43PPi0XgY"
   testing_data_url: "https://api.coronavirus.data.gov.uk/v1/data?filters=areaType=nation;areaName=England&structure=%7B%22date%22:%22date%22,%22newPillarOneTestsByPublishDate%22:%22newPillarOneTestsByPublishDate%22,%22newPillarTwoTestsByPublishDate%22:%22newPillarTwoTestsByPublishDate%22,%22newPillarThreeTestsByPublishDate%22:%22newPillarThreeTestsByPublishDate%22%7D&format=csv"
@@ -101,6 +102,13 @@ localAuthorityCases <- left_join(localAuthorityCases, regionLookup, by = "AreaCo
   select(RegionName, RegionCode, AreaName:CumulativeRate)
 kable(localAuthorityCases[1:5,], caption = "Confirmed Covid-19 cases in lower tier local authorities")
 ```
+
+<!-- ## Cases, hospitalisation, intensive care and death -->
+
+<!-- It's useful to understand the relationships between numbers of cases, numbers of people in hospital, numbers in intensive care, and deaths from Covid-19. We'll look at these at a very aggregated level, just in England, to understand their relationship. -->
+
+<!-- ```{r load } -->
+<!-- ``` -->
 
 ## Examining cases in an area
 
