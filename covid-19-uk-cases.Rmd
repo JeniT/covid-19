@@ -557,8 +557,11 @@ Interesting areas to look at here are:
 
 ```{r graph areas with restrictions}
 case_rate_graph = function(area) {
+  areaRestrictions <- filter(restrictions, AreaName == area, StartDate <= mostRecentDate)
+  if (area == "Hackney" || area == "City of London") {
+    area = "Hackney and City of London"
+  }
   areaCases <- filter(localAuthorityCases, AreaName == area)
-  areaRestrictions <- filter(restrictions, AreaName == area)
   region = pull(areaCases, RegionName)[1]
   yrng = range(areaCases$AverageDailyRate)
   xrng = range(areaCases$Date)
@@ -594,15 +597,30 @@ case_rate_graph = function(area) {
 
 caseAreas = unique(pull(localAuthorityCases, AreaName))
 restrictedAreas = unique(pull(restrictions, AreaName))
+upcomingRestrictions = filter(restrictions, StartDate > mostRecentDate)
 currentRestrictions = filter(restrictions, EndDate >= mostRecentDate)
 currentRestrictionAreas = unique(pull(currentRestrictions, AreaName))
+currentRestrictions = filter(currentRestrictions, StartDate <= mostRecentDate)
 ```
 
 #### Tier 3 restrictions
 
-```{r tier 3 restrictions}
-tier3Restrictions = unique(pull(filter(currentRestrictions, Tier == 3), AreaName))
-for (area in tier3Restrictions) {
+##### Current Tier 3 restrictions
+
+```{r current tier 3 restrictions}
+currentTier3Restrictions = unique(pull(filter(currentRestrictions, Tier == 3) %>% arrange(AreaName), AreaName))
+for (area in currentTier3Restrictions) {
+  if (area %in% caseAreas) {
+    print(case_rate_graph(area))
+  }
+}
+```
+
+##### Upcoming Tier 3 restrictions
+
+```{r upcoming tier 3 restrictions}
+upcomingTier3Restrictions = unique(pull(filter(upcomingRestrictions, Tier == 3) %>% arrange(AreaName), AreaName))
+for (area in upcomingTier3Restrictions) {
   if (area %in% caseAreas) {
     print(case_rate_graph(area))
   }
@@ -611,9 +629,22 @@ for (area in tier3Restrictions) {
 
 #### Tier 2 restrictions
 
-```{r tier 2 restrictions}
-tier2Restrictions = unique(pull(filter(currentRestrictions, Tier == 2), AreaName))
-for (area in tier2Restrictions) {
+##### Current Tier 2 restrictions
+
+```{r current tier 2 restrictions}
+currentTier2Restrictions = unique(pull(filter(currentRestrictions, Tier == 2) %>% arrange(AreaName), AreaName))
+for (area in currentTier2Restrictions) {
+  if (area %in% caseAreas) {
+    print(case_rate_graph(area))
+  }
+}
+```
+
+##### Upcoming Tier 2 restrictions
+
+```{r upcoming tier 2 restrictions}
+upcomingtTier2Restrictions = unique(pull(filter(upcomingRestrictions, Tier == 2) %>% arrange(AreaName), AreaName))
+for (area in upcomingtTier2Restrictions) {
   if (area %in% caseAreas) {
     print(case_rate_graph(area))
   }
