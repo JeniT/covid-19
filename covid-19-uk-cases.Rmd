@@ -103,13 +103,6 @@ localAuthorityCases <- left_join(localAuthorityCases, regionLookup, by = "AreaCo
 kable(localAuthorityCases[1:5,], caption = "Confirmed Covid-19 cases in lower tier local authorities")
 ```
 
-<!-- ## Cases, hospitalisation, intensive care and death -->
-
-<!-- It's useful to understand the relationships between numbers of cases, numbers of people in hospital, numbers in intensive care, and deaths from Covid-19. We'll look at these at a very aggregated level, just in England, to understand their relationship. -->
-
-<!-- ```{r load } -->
-<!-- ``` -->
-
 ## Examining cases in an area
 
 Let's pick an area and see whether we can plot the cumulative lab-confirmed cases for that area.
@@ -607,22 +600,26 @@ currentRestrictions = filter(currentRestrictions, StartDate <= mostRecentDate)
 
 ##### Current Tier 3 restrictions
 
-```{r current tier 3 restrictions}
+```{r current tier 3 restrictions, results='asis'}
 currentTier3Restrictions = unique(pull(filter(currentRestrictions, Tier == 3) %>% arrange(AreaName), AreaName))
 for (area in currentTier3Restrictions) {
   if (area %in% caseAreas) {
+    cat("###### ", area, "\n\n")
     print(case_rate_graph(area))
+    cat("\n\n")
   }
 }
 ```
 
 ##### Upcoming Tier 3 restrictions
 
-```{r upcoming tier 3 restrictions}
+```{r upcoming tier 3 restrictions, results='asis'}
 upcomingTier3Restrictions = unique(pull(filter(upcomingRestrictions, Tier == 3) %>% arrange(AreaName), AreaName))
 for (area in upcomingTier3Restrictions) {
   if (area %in% caseAreas) {
+    cat("###### ", area, "\n\n")
     print(case_rate_graph(area))
+    cat("\n\n")
   }
 }
 ```
@@ -631,33 +628,39 @@ for (area in upcomingTier3Restrictions) {
 
 ##### Current Tier 2 restrictions
 
-```{r current tier 2 restrictions}
+```{r current tier 2 restrictions, results='asis'}
 currentTier2Restrictions = unique(pull(filter(currentRestrictions, Tier == 2) %>% arrange(AreaName), AreaName))
 for (area in currentTier2Restrictions) {
   if (area %in% caseAreas) {
+    cat("###### ", area, "\n\n")
     print(case_rate_graph(area))
+    cat("\n\n")
   }
 }
 ```
 
 ##### Upcoming Tier 2 restrictions
 
-```{r upcoming tier 2 restrictions}
+```{r upcoming tier 2 restrictions, results='asis'}
 upcomingtTier2Restrictions = unique(pull(filter(upcomingRestrictions, Tier == 2) %>% arrange(AreaName), AreaName))
 for (area in upcomingtTier2Restrictions) {
   if (area %in% caseAreas) {
+    cat("###### ", area, "\n\n")
     print(case_rate_graph(area))
+    cat("\n\n")
   }
 }
 ```
 
 ### Previous restrictions
 
-```{r display previously restricted areas}
+```{r display previously restricted areas, results='asis'}
 previousRestrictions = restrictedAreas[!(restrictedAreas %in% currentRestrictionAreas)]
 
 for (area in previousRestrictions) {
+  cat("#### ", area, "\n\n")
   print(case_rate_graph(area))
+  cat("\n\n")
 }
 ```
 
@@ -700,9 +703,11 @@ cat(paste("*", unlockedDownAreas), sep="\n")
 
 Now we'll create charts for those places where there is widespread infection that do not currently have additional restrictions (some of which might be duplicates of the graphs above, because they previously did have local restrictions):
 
-```{r graph data for areas with widespread infection rates}
+```{r graph data for areas with widespread infection rates, results='asis'}
 for (area in unlockedDownAreas) {
+  cat("#### ", area, "\n\n")
   print(case_rate_graph(area))
+  cat("\n\n")
 }
 ```
 
@@ -725,15 +730,17 @@ cat(paste("*", worrisomeAreas), sep="\n")
 
 Again we'll create charts for those places that do not currently have additional restrictions:
 
-```{r graph data for worrisome areas}
+```{r graph data for worrisome areas, results='asis'}
 for (area in worrisomeAreas) {
   if (!(area %in% currentRestrictionAreas)) {
+    cat("#### ", area, "\n\n")
     print(case_rate_graph(area))
+    cat("\n\n")
   }
 }
 ```
 
-## Identifying areas that aren't worrying
+## Identifying areas that are the least worrying
 
 Finally, for comparison, let's have a look at the ten places with the lowest current average daily rates.
 
@@ -744,9 +751,11 @@ okAreas = unique(pull(arrange(recentCases, AverageDailyRate), AreaName))[1:10]
 cat(paste("*", okAreas), sep="\n")
 ```
 
-```{r graph data for low rate areas}
+```{r graph data for low rate areas, results='asis'}
 for (area in okAreas) {
+  cat("### ", area, "\n\n")
   print(case_rate_graph(area))
+  cat("\n\n")
 }
 ```
 
@@ -762,9 +771,11 @@ newsAreas = c("Liverpool", "Hartlepool", "Middlesbrough", "Warrington")
 cat(paste("*", newsAreas), sep="\n")
 ```
 
-```{r graph data for areas in the news}
+```{r graph data for areas in the news, results='asis'}
 for (area in newsAreas) {
+  cat("### ", area, "\n\n")
   print(case_rate_graph(area))
+  cat("\n\n")
 }
 ```
 
@@ -779,9 +790,11 @@ londonBoroughs = c("Hackney and City of London", "Westminster", "Kensington and 
 cat(paste("*", londonBoroughs), sep="\n")
 ```
 
-```{r graphs for london boroughs}
+```{r graphs for london boroughs, results='asis'}
 for (area in londonBoroughs) {
- print(case_rate_graph(area))
+  cat("#### ", area, "\n\n")
+  print(case_rate_graph(area))
+  cat("\n\n")
 }
 ```
 
