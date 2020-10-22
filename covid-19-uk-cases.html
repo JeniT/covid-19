@@ -198,22 +198,32 @@ summary {
 <li><a href="#significant-and-increasing-infection">Significant and increasing infection</a></li>
 </ul></li>
 <li><a href="#identifying-areas-that-are-the-least-worrying">Identifying areas that are the least worrying</a><ul>
+<li><a href="#isle-of-wight">Isle of Wight</a></li>
 <li><a href="#torridge">Torridge</a></li>
 <li><a href="#south-somerset">South Somerset</a></li>
-<li><a href="#cornwall-and-isles-of-scilly">Cornwall and Isles of Scilly</a></li>
-<li><a href="#folkestone-and-hythe">Folkestone and Hythe</a></li>
 <li><a href="#gosport">Gosport</a></li>
-<li><a href="#mid-devon">Mid Devon</a></li>
-<li><a href="#isle-of-wight">Isle of Wight</a></li>
+<li><a href="#worthing">Worthing</a></li>
+<li><a href="#north-devon-1">North Devon</a></li>
+<li><a href="#tonbridge-and-malling">Tonbridge and Malling</a></li>
+<li><a href="#north-norfolk">North Norfolk</a></li>
 <li><a href="#rother">Rother</a></li>
-<li><a href="#tewkesbury">Tewkesbury</a></li>
-<li><a href="#arun">Arun</a></li>
+<li><a href="#cornwall-and-isles-of-scilly">Cornwall and Isles of Scilly</a></li>
 </ul></li>
 <li><a href="#areas-of-interest">Areas of interest</a><ul>
-<li><a href="#liverpool-2">Liverpool</a></li>
-<li><a href="#hartlepool-1">Hartlepool</a></li>
-<li><a href="#middlesbrough-1">Middlesbrough</a></li>
-<li><a href="#warrington-1">Warrington</a></li>
+<li><a href="#bolton-2">Bolton</a></li>
+<li><a href="#bury-2">Bury</a></li>
+<li><a href="#manchester-2">Manchester</a></li>
+<li><a href="#oldham-2">Oldham</a></li>
+<li><a href="#rochdale-2">Rochdale</a></li>
+<li><a href="#salford-2">Salford</a></li>
+<li><a href="#stockport-2">Stockport</a></li>
+<li><a href="#tameside-2">Tameside</a></li>
+<li><a href="#trafford-2">Trafford</a></li>
+<li><a href="#wigan-2">Wigan</a></li>
+<li><a href="#barnsley-2">Barnsley</a></li>
+<li><a href="#doncaster-2">Doncaster</a></li>
+<li><a href="#rotherham-2">Rotherham</a></li>
+<li><a href="#sheffield-2">Sheffield</a></li>
 <li><a href="#london">London</a></li>
 </ul></li>
 </ul>
@@ -222,7 +232,7 @@ summary {
 <p>This analysis looks at the figures for Covid-19 cases in England. It’s a little dig into what this data can - and can’t - tell us. The <a href="https://github.com/JeniT/covid-19/blob/master/covid19-cases-england-local-authorities.Rmd">source code is available on Github</a>.</p>
 <p><strong>If you want to just skip to a general picture of Covid-19 cases across the UK, <a href="https://jenit.github.io/covid-19/covid-19-uk-cases.html#comparing-local-authorities">click here</a>. If you want to look at a particular area, search in the page for the area name; if you can’t find it, that’s probably because cases aren’t that high there right now.</strong></p>
 <p>The data is from <a href="https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv" class="uri">https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv</a> and reports “lab-confirmed positive COVID-19 PCR test on or up to the specimen date”. The specimen date is the date that someone had the test taken, and it can take a number of days to process the test and to report the result. That has some implications about the numbers from more recent days, which we’ll come back to later. The official site has <a href="https://coronavirus.data.gov.uk/about-data#daily-and-cumulative-numbers-of-cases">more details about the meaning of case numbers</a>.</p>
-<p>The most recent data shown here is from 2020-10-18. This data is quite big: it contains 107664 rows and 7 columns. That’s why we’re processing it in R rather than a Google Spreadsheet or Excel.</p>
+<p>The most recent data shown here is from 2020-10-20. This data is quite big: it contains 108614 rows and 7 columns. That’s why we’re processing it in R rather than a Google Spreadsheet or Excel.</p>
 <p>Let’s take a look at the first five lines.</p>
 <table>
 <caption>Confirmed Covid-19 cases in England</caption>
@@ -242,46 +252,46 @@ summary {
 <td align="left">Adur</td>
 <td align="left">E07000223</td>
 <td align="left">ltla</td>
-<td align="left">2020-10-18</td>
+<td align="left">2020-10-20</td>
 <td align="right">0</td>
-<td align="right">307</td>
-<td align="right">477.4</td>
+<td align="right">318</td>
+<td align="right">494.5</td>
+</tr>
+<tr class="even">
+<td align="left">Adur</td>
+<td align="left">E07000223</td>
+<td align="left">ltla</td>
+<td align="left">2020-10-19</td>
+<td align="right">1</td>
+<td align="right">318</td>
+<td align="right">494.5</td>
+</tr>
+<tr class="odd">
+<td align="left">Adur</td>
+<td align="left">E07000223</td>
+<td align="left">ltla</td>
+<td align="left">2020-10-18</td>
+<td align="right">4</td>
+<td align="right">317</td>
+<td align="right">493.0</td>
 </tr>
 <tr class="even">
 <td align="left">Adur</td>
 <td align="left">E07000223</td>
 <td align="left">ltla</td>
 <td align="left">2020-10-17</td>
-<td align="right">1</td>
-<td align="right">307</td>
-<td align="right">477.4</td>
+<td align="right">4</td>
+<td align="right">313</td>
+<td align="right">486.8</td>
 </tr>
 <tr class="odd">
 <td align="left">Adur</td>
 <td align="left">E07000223</td>
 <td align="left">ltla</td>
 <td align="left">2020-10-16</td>
-<td align="right">2</td>
-<td align="right">306</td>
-<td align="right">475.9</td>
-</tr>
-<tr class="even">
-<td align="left">Adur</td>
-<td align="left">E07000223</td>
-<td align="left">ltla</td>
-<td align="left">2020-10-15</td>
-<td align="right">2</td>
-<td align="right">304</td>
-<td align="right">472.8</td>
-</tr>
-<tr class="odd">
-<td align="left">Adur</td>
-<td align="left">E07000223</td>
-<td align="left">ltla</td>
-<td align="left">2020-10-14</td>
-<td align="right">6</td>
-<td align="right">302</td>
-<td align="right">469.7</td>
+<td align="right">3</td>
+<td align="right">309</td>
+<td align="right">480.6</td>
 </tr>
 </tbody>
 </table>
@@ -310,42 +320,42 @@ summary {
 <tr class="odd">
 <td align="left">Adur</td>
 <td align="left">E07000223</td>
-<td align="left">2020-10-18</td>
+<td align="left">2020-10-20</td>
 <td align="right">0</td>
-<td align="right">307</td>
-<td align="right">477.4</td>
+<td align="right">318</td>
+<td align="right">494.5</td>
 </tr>
 <tr class="even">
 <td align="left">Allerdale</td>
 <td align="left">E07000026</td>
-<td align="left">2020-10-18</td>
+<td align="left">2020-10-20</td>
 <td align="right">0</td>
-<td align="right">673</td>
-<td align="right">688.4</td>
+<td align="right">712</td>
+<td align="right">728.3</td>
 </tr>
 <tr class="odd">
 <td align="left">Amber Valley</td>
 <td align="left">E07000032</td>
-<td align="left">2020-10-18</td>
+<td align="left">2020-10-20</td>
 <td align="right">0</td>
-<td align="right">1066</td>
-<td align="right">831.9</td>
+<td align="right">1166</td>
+<td align="right">909.9</td>
 </tr>
 <tr class="even">
 <td align="left">Arun</td>
 <td align="left">E07000224</td>
-<td align="left">2020-10-18</td>
+<td align="left">2020-10-20</td>
 <td align="right">0</td>
-<td align="right">569</td>
-<td align="right">353.9</td>
+<td align="right">603</td>
+<td align="right">375.1</td>
 </tr>
 <tr class="odd">
 <td align="left">Ashfield</td>
 <td align="left">E07000170</td>
-<td align="left">2020-10-18</td>
-<td align="right">1</td>
-<td align="right">1346</td>
-<td align="right">1052.2</td>
+<td align="left">2020-10-20</td>
+<td align="right">0</td>
+<td align="right">1451</td>
+<td align="right">1134.3</td>
 </tr>
 </tbody>
 </table>
@@ -380,50 +390,50 @@ summary {
 <td align="left">E12000008</td>
 <td align="left">Adur</td>
 <td align="left">E07000223</td>
-<td align="left">2020-10-18</td>
+<td align="left">2020-10-20</td>
 <td align="right">0</td>
-<td align="right">307</td>
-<td align="right">477.4</td>
+<td align="right">318</td>
+<td align="right">494.5</td>
 </tr>
 <tr class="even">
 <td align="left">North West</td>
 <td align="left">E12000002</td>
 <td align="left">Allerdale</td>
 <td align="left">E07000026</td>
-<td align="left">2020-10-18</td>
+<td align="left">2020-10-20</td>
 <td align="right">0</td>
-<td align="right">673</td>
-<td align="right">688.4</td>
+<td align="right">712</td>
+<td align="right">728.3</td>
 </tr>
 <tr class="odd">
 <td align="left">East Midlands</td>
 <td align="left">E12000004</td>
 <td align="left">Amber Valley</td>
 <td align="left">E07000032</td>
-<td align="left">2020-10-18</td>
+<td align="left">2020-10-20</td>
 <td align="right">0</td>
-<td align="right">1066</td>
-<td align="right">831.9</td>
+<td align="right">1166</td>
+<td align="right">909.9</td>
 </tr>
 <tr class="even">
 <td align="left">South East</td>
 <td align="left">E12000008</td>
 <td align="left">Arun</td>
 <td align="left">E07000224</td>
-<td align="left">2020-10-18</td>
+<td align="left">2020-10-20</td>
 <td align="right">0</td>
-<td align="right">569</td>
-<td align="right">353.9</td>
+<td align="right">603</td>
+<td align="right">375.1</td>
 </tr>
 <tr class="odd">
 <td align="left">East Midlands</td>
 <td align="left">E12000004</td>
 <td align="left">Ashfield</td>
 <td align="left">E07000170</td>
-<td align="left">2020-10-18</td>
-<td align="right">1</td>
-<td align="right">1346</td>
-<td align="right">1052.2</td>
+<td align="left">2020-10-20</td>
+<td align="right">0</td>
+<td align="right">1451</td>
+<td align="right">1134.3</td>
 </tr>
 </tbody>
 </table>
@@ -461,10 +471,30 @@ summary {
 <td align="left">E12000002</td>
 <td align="left">Manchester</td>
 <td align="left">E08000003</td>
+<td align="left">2020-10-20</td>
+<td align="right">1</td>
+<td align="right">16421</td>
+<td align="right">2970.2</td>
+</tr>
+<tr class="even">
+<td align="left">North West</td>
+<td align="left">E12000002</td>
+<td align="left">Manchester</td>
+<td align="left">E08000003</td>
+<td align="left">2020-10-19</td>
+<td align="right">436</td>
+<td align="right">16420</td>
+<td align="right">2970.0</td>
+</tr>
+<tr class="odd">
+<td align="left">North West</td>
+<td align="left">E12000002</td>
+<td align="left">Manchester</td>
+<td align="left">E08000003</td>
 <td align="left">2020-10-18</td>
-<td align="right">4</td>
-<td align="right">15541</td>
-<td align="right">2811.0</td>
+<td align="right">252</td>
+<td align="right">15984</td>
+<td align="right">2891.2</td>
 </tr>
 <tr class="even">
 <td align="left">North West</td>
@@ -472,9 +502,9 @@ summary {
 <td align="left">Manchester</td>
 <td align="left">E08000003</td>
 <td align="left">2020-10-17</td>
-<td align="right">204</td>
-<td align="right">15537</td>
-<td align="right">2810.3</td>
+<td align="right">279</td>
+<td align="right">15732</td>
+<td align="right">2845.6</td>
 </tr>
 <tr class="odd">
 <td align="left">North West</td>
@@ -482,29 +512,9 @@ summary {
 <td align="left">Manchester</td>
 <td align="left">E08000003</td>
 <td align="left">2020-10-16</td>
-<td align="right">260</td>
-<td align="right">15333</td>
-<td align="right">2773.4</td>
-</tr>
-<tr class="even">
-<td align="left">North West</td>
-<td align="left">E12000002</td>
-<td align="left">Manchester</td>
-<td align="left">E08000003</td>
-<td align="left">2020-10-15</td>
-<td align="right">322</td>
-<td align="right">15073</td>
-<td align="right">2726.4</td>
-</tr>
-<tr class="odd">
-<td align="left">North West</td>
-<td align="left">E12000002</td>
-<td align="left">Manchester</td>
-<td align="left">E08000003</td>
-<td align="left">2020-10-14</td>
-<td align="right">415</td>
-<td align="right">14751</td>
-<td align="right">2668.1</td>
+<td align="right">344</td>
+<td align="right">15453</td>
+<td align="right">2795.1</td>
 </tr>
 </tbody>
 </table>
@@ -525,54 +535,54 @@ summary {
 </thead>
 <tbody>
 <tr class="odd">
+<td align="left">2020-10-20</td>
+<td align="right">1</td>
+<td align="right">242.0000</td>
+</tr>
+<tr class="even">
+<td align="left">2020-10-19</td>
+<td align="right">436</td>
+<td align="right">262.4000</td>
+</tr>
+<tr class="odd">
 <td align="left">2020-10-18</td>
-<td align="right">4</td>
-<td align="right">197.5000</td>
+<td align="right">252</td>
+<td align="right">276.5000</td>
 </tr>
 <tr class="even">
 <td align="left">2020-10-17</td>
-<td align="right">204</td>
-<td align="right">241.0000</td>
+<td align="right">279</td>
+<td align="right">297.4286</td>
 </tr>
 <tr class="odd">
 <td align="left">2020-10-16</td>
-<td align="right">260</td>
-<td align="right">264.6667</td>
+<td align="right">344</td>
+<td align="right">352.4286</td>
 </tr>
 <tr class="even">
 <td align="left">2020-10-15</td>
-<td align="right">322</td>
-<td align="right">279.2857</td>
+<td align="right">347</td>
+<td align="right">342.5714</td>
 </tr>
 <tr class="odd">
 <td align="left">2020-10-14</td>
-<td align="right">415</td>
-<td align="right">308.5714</td>
+<td align="right">423</td>
+<td align="right">336.4286</td>
 </tr>
 <tr class="even">
 <td align="left">2020-10-13</td>
-<td align="right">383</td>
-<td align="right">318.7143</td>
+<td align="right">386</td>
+<td align="right">335.8571</td>
 </tr>
 <tr class="odd">
 <td align="left">2020-10-12</td>
 <td align="right">367</td>
-<td align="right">335.4286</td>
+<td align="right">340.5714</td>
 </tr>
 <tr class="even">
 <td align="left">2020-10-11</td>
 <td align="right">209</td>
-<td align="right">345.5714</td>
-</tr>
-<tr class="odd">
-<td align="left">2020-10-10</td>
-<td align="right">275</td>
-<td align="right">351.0000</td>
-</tr>
-<tr class="even">
-<td align="left">2020-10-09</td>
-<td align="right">377</td>
-<td align="right">365.2857</td>
+<td align="right">347.1429</td>
 </tr>
 </tbody>
 </table>
@@ -624,6 +634,15 @@ summary {
 <td align="right">NA</td>
 </tr>
 <tr class="odd">
+<td align="left">E07000135</td>
+<td align="left">Oadby and Wigston</td>
+<td align="left">2020-07-04</td>
+<td align="left">2020-08-01</td>
+<td align="left"><a href="https://www.legislation.gov.uk/uksi/2020/685" class="uri">https://www.legislation.gov.uk/uksi/2020/685</a></td>
+<td align="left"><a href="https://www.gov.uk/guidance/leicester-lockdown-what-you-can-and-cannot-do" class="uri">https://www.gov.uk/guidance/leicester-lockdown-what-you-can-and-cannot-do</a></td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
 <td align="left">E06000008</td>
 <td align="left">Blackburn with Darwen</td>
 <td align="left">2020-07-25</td>
@@ -632,22 +651,13 @@ summary {
 <td align="left"><a href="https://www.gov.uk/guidance/north-west-england-local-restrictions" class="uri">https://www.gov.uk/guidance/north-west-england-local-restrictions</a></td>
 <td align="right">NA</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">E06000032</td>
 <td align="left">Luton</td>
 <td align="left">2020-07-25</td>
 <td align="left">2020-08-01</td>
 <td align="left"><a href="https://www.legislation.gov.uk/uksi/2020/800" class="uri">https://www.legislation.gov.uk/uksi/2020/800</a></td>
 <td align="left"><a href="https://www.gov.uk/guidance/luton-local-restrictions" class="uri">https://www.gov.uk/guidance/luton-local-restrictions</a></td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">E07000135</td>
-<td align="left">Oadby and Wigston</td>
-<td align="left">2020-07-04</td>
-<td align="left">2020-08-01</td>
-<td align="left"><a href="https://www.legislation.gov.uk/uksi/2020/685" class="uri">https://www.legislation.gov.uk/uksi/2020/685</a></td>
-<td align="left"><a href="https://www.gov.uk/guidance/leicester-lockdown-what-you-can-and-cannot-do" class="uri">https://www.gov.uk/guidance/leicester-lockdown-what-you-can-and-cannot-do</a></td>
 <td align="right">NA</td>
 </tr>
 </tbody>
@@ -672,34 +682,34 @@ summary {
 </thead>
 <tbody>
 <tr class="odd">
+<td align="left">2020-10-20</td>
+<td align="right">66227</td>
+<td align="right">153908</td>
+<td align="right">3886</td>
+</tr>
+<tr class="even">
 <td align="left">2020-10-19</td>
+<td align="right">54556</td>
+<td align="right">145888</td>
+<td align="right">3192</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-10-18</td>
 <td align="right">47851</td>
 <td align="right">199077</td>
 <td align="right">495</td>
 </tr>
 <tr class="even">
-<td align="left">2020-10-18</td>
+<td align="left">2020-10-17</td>
 <td align="right">59077</td>
 <td align="right">179646</td>
 <td align="right">1226</td>
 </tr>
 <tr class="odd">
-<td align="left">2020-10-17</td>
+<td align="left">2020-10-16</td>
 <td align="right">63357</td>
 <td align="right">194363</td>
 <td align="right">4419</td>
-</tr>
-<tr class="even">
-<td align="left">2020-10-16</td>
-<td align="right">67267</td>
-<td align="right">169572</td>
-<td align="right">3742</td>
-</tr>
-<tr class="odd">
-<td align="left">2020-10-15</td>
-<td align="right">66513</td>
-<td align="right">172121</td>
-<td align="right">3891</td>
 </tr>
 </tbody>
 </table>
@@ -751,7 +761,29 @@ summary {
 </thead>
 <tbody>
 <tr class="odd">
+<td align="left">2020-10-20</td>
+<td align="right">83574</td>
+<td align="right">281000</td>
+<td align="right">120000</td>
+<td align="right">10059</td>
+<td align="right">77740</td>
+<td align="right">180880</td>
+<td align="right">3886</td>
+<td align="right">21376</td>
+</tr>
+<tr class="even">
 <td align="left">2020-10-19</td>
+<td align="right">83220</td>
+<td align="right">276000</td>
+<td align="right">120000</td>
+<td align="right">4001</td>
+<td align="right">64568</td>
+<td align="right">169118</td>
+<td align="right">3192</td>
+<td align="right">26652</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-10-18</td>
 <td align="right">83370</td>
 <td align="right">247000</td>
 <td align="right">120000</td>
@@ -762,7 +794,7 @@ summary {
 <td align="right">26009</td>
 </tr>
 <tr class="even">
-<td align="left">2020-10-18</td>
+<td align="left">2020-10-17</td>
 <td align="right">80668</td>
 <td align="right">247000</td>
 <td align="right">120000</td>
@@ -773,7 +805,7 @@ summary {
 <td align="right">30839</td>
 </tr>
 <tr class="odd">
-<td align="left">2020-10-17</td>
+<td align="left">2020-10-16</td>
 <td align="right">83461</td>
 <td align="right">245000</td>
 <td align="right">120000</td>
@@ -782,28 +814,6 @@ summary {
 <td align="right">214369</td>
 <td align="right">4419</td>
 <td align="right">24408</td>
-</tr>
-<tr class="even">
-<td align="left">2020-10-16</td>
-<td align="right">83306</td>
-<td align="right">239700</td>
-<td align="right">120000</td>
-<td align="right">1100</td>
-<td align="right">79441</td>
-<td align="right">199272</td>
-<td align="right">3742</td>
-<td align="right">26401</td>
-</tr>
-<tr class="odd">
-<td align="left">2020-10-15</td>
-<td align="right">83710</td>
-<td align="right">261425</td>
-<td align="right">120000</td>
-<td align="right">1100</td>
-<td align="right">80081</td>
-<td align="right">193713</td>
-<td align="right">3891</td>
-<td align="right">22838</td>
 </tr>
 </tbody>
 </table>
@@ -833,74 +843,74 @@ summary {
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">Rossendale</td>
-<td align="left">2020-10-18</td>
-<td align="right">40.50</td>
-<td align="right">71482</td>
-<td align="right">56.65762</td>
+<td align="left">Blackburn with Darwen</td>
+<td align="left">2020-10-20</td>
+<td align="right">104.00</td>
+<td align="right">149696</td>
+<td align="right">69.47413</td>
 </tr>
 <tr class="even">
-<td align="left">Blackburn with Darwen</td>
-<td align="left">2020-10-18</td>
-<td align="right">74.75</td>
-<td align="right">149696</td>
-<td align="right">49.93453</td>
+<td align="left">Rossendale</td>
+<td align="left">2020-10-20</td>
+<td align="right">45.25</td>
+<td align="right">71482</td>
+<td align="right">63.30265</td>
 </tr>
 <tr class="odd">
 <td align="left">Knowsley</td>
-<td align="left">2020-10-18</td>
-<td align="right">73.75</td>
+<td align="left">2020-10-20</td>
+<td align="right">84.25</td>
 <td align="right">150862</td>
-<td align="right">48.88574</td>
+<td align="right">55.84574</td>
 </tr>
 <tr class="even">
-<td align="left">Ribble Valley</td>
-<td align="left">2020-10-18</td>
-<td align="right">25.75</td>
-<td align="right">60888</td>
-<td align="right">42.29076</td>
+<td align="left">Salford</td>
+<td align="left">2020-10-20</td>
+<td align="right">138.25</td>
+<td align="right">258834</td>
+<td align="right">53.41261</td>
 </tr>
 <tr class="odd">
-<td align="left">Liverpool</td>
-<td align="left">2020-10-18</td>
-<td align="right">210.50</td>
-<td align="right">498042</td>
-<td align="right">42.26551</td>
+<td align="left">Rochdale</td>
+<td align="left">2020-10-20</td>
+<td align="right">118.00</td>
+<td align="right">222412</td>
+<td align="right">53.05469</td>
 </tr>
 <tr class="even">
 <td align="left">Oldham</td>
-<td align="left">2020-10-18</td>
-<td align="right">97.25</td>
+<td align="left">2020-10-20</td>
+<td align="right">125.75</td>
 <td align="right">237110</td>
-<td align="right">41.01472</td>
+<td align="right">53.03446</td>
 </tr>
 <tr class="odd">
-<td align="left">Bolton</td>
-<td align="left">2020-10-18</td>
-<td align="right">115.50</td>
-<td align="right">287550</td>
-<td align="right">40.16693</td>
+<td align="left">Barnsley</td>
+<td align="left">2020-10-20</td>
+<td align="right">128.50</td>
+<td align="right">246866</td>
+<td align="right">52.05253</td>
 </tr>
 <tr class="even">
-<td align="left">Rochdale</td>
-<td align="left">2020-10-18</td>
-<td align="right">89.25</td>
-<td align="right">222412</td>
-<td align="right">40.12823</td>
+<td align="left">Hyndburn</td>
+<td align="left">2020-10-20</td>
+<td align="right">39.50</td>
+<td align="right">81043</td>
+<td align="right">48.73956</td>
 </tr>
 <tr class="odd">
-<td align="left">Salford</td>
-<td align="left">2020-10-18</td>
-<td align="right">103.75</td>
-<td align="right">258834</td>
-<td align="right">40.08361</td>
+<td align="left">Ribble Valley</td>
+<td align="left">2020-10-20</td>
+<td align="right">29.50</td>
+<td align="right">60888</td>
+<td align="right">48.44961</td>
 </tr>
 <tr class="even">
-<td align="left">Pendle</td>
-<td align="left">2020-10-18</td>
-<td align="right">35.50</td>
-<td align="right">92112</td>
-<td align="right">38.54004</td>
+<td align="left">Liverpool</td>
+<td align="left">2020-10-20</td>
+<td align="right">239.25</td>
+<td align="right">498042</td>
+<td align="right">48.03812</td>
 </tr>
 </tbody>
 </table>
@@ -914,7 +924,7 @@ summary {
 <p>As discussed, it is possible to reduce the number of new cases in the data by simply not testing as many people. In the UK, testing capacity is probably not limited in this way, but there isn’t enough granularity in the public testing figures to be able to tell. Regardless, the figures above give a rough indication of how concerned to be about the level of infection in an area.</p>
 <p>We’ll try to plot these on a map. There’s a great <a href="https://rforjournalists.com/2019/10/20/how-to-make-a-uk-local-authority-choropleth-map-in-r/">tutorial for this</a> which we’ll just follow. We’re using <a href="https://geoportal.statistics.gov.uk/datasets/local-authority-districts-april-2019-uk-buc">ultra generalised 2019 boundaries from ONS</a>, which like the population data we’ve downloaded locally into a folder.</p>
 <p>First we load the shape file and ensure that it knows what regions we’re using from it.</p>
-<p>Then we filter the local authority data to the most recent date (2020-10-18) and retain only area code and the average daily rate. This is the data that’s relevant for the map.</p>
+<p>Then we filter the local authority data to the most recent date (2020-10-20) and retain only area code and the average daily rate. This is the data that’s relevant for the map.</p>
 <p>Then we merge the map data into the shape data and plot the map.</p>
 <p><img src="covid-19-uk-cases_files/figure-html/display%20map-1.png" width="672" /></p>
 <p>This highlights some areas that have high rates of cases, but unless you’re great at UK geography you might struggle to name them. So we’ll move on to look at some individually in a bit.</p>
@@ -976,112 +986,144 @@ summary {
 <h4>Tier 3 restrictions</h4>
 <div id="current-tier-3-restrictions" class="section level5">
 <h5>Current Tier 3 restrictions</h5>
+<div id="blackburn-with-darwen" class="section level6">
+<h6>Blackburn with Darwen</h6>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-1.png" width="672" /></p>
+</div>
+<div id="blackpool" class="section level6">
+<h6>Blackpool</h6>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-2.png" width="672" /></p>
+</div>
+<div id="burnley" class="section level6">
+<h6>Burnley</h6>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-3.png" width="672" /></p>
+</div>
+<div id="chorley" class="section level6">
+<h6>Chorley</h6>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-4.png" width="672" /></p>
+</div>
+<div id="fylde" class="section level6">
+<h6>Fylde</h6>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-5.png" width="672" /></p>
+</div>
 <div id="halton" class="section level6">
 <h6>Halton</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-1.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-6.png" width="672" /></p>
+</div>
+<div id="hyndburn" class="section level6">
+<h6>Hyndburn</h6>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-7.png" width="672" /></p>
 </div>
 <div id="knowsley" class="section level6">
 <h6>Knowsley</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-2.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-8.png" width="672" /></p>
+</div>
+<div id="lancaster" class="section level6">
+<h6>Lancaster</h6>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-9.png" width="672" /></p>
 </div>
 <div id="liverpool" class="section level6">
 <h6>Liverpool</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-3.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-10.png" width="672" /></p>
+</div>
+<div id="pendle" class="section level6">
+<h6>Pendle</h6>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-11.png" width="672" /></p>
+</div>
+<div id="preston" class="section level6">
+<h6>Preston</h6>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-12.png" width="672" /></p>
+</div>
+<div id="ribble-valley" class="section level6">
+<h6>Ribble Valley</h6>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-13.png" width="672" /></p>
+</div>
+<div id="rossendale" class="section level6">
+<h6>Rossendale</h6>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-14.png" width="672" /></p>
 </div>
 <div id="sefton" class="section level6">
 <h6>Sefton</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-4.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-15.png" width="672" /></p>
+</div>
+<div id="south-ribble" class="section level6">
+<h6>South Ribble</h6>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-16.png" width="672" /></p>
 </div>
 <div id="st.-helens" class="section level6">
 <h6>St. Helens</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-5.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-17.png" width="672" /></p>
+</div>
+<div id="west-lancashire" class="section level6">
+<h6>West Lancashire</h6>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-18.png" width="672" /></p>
 </div>
 <div id="wirral" class="section level6">
 <h6>Wirral</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-6.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-19.png" width="672" /></p>
+</div>
+<div id="wyre" class="section level6">
+<h6>Wyre</h6>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%203%20restrictions-20.png" width="672" /></p>
 </div>
 </div>
 <div id="upcoming-tier-3-restrictions" class="section level5">
 <h5>Upcoming Tier 3 restrictions</h5>
-<div id="blackburn-with-darwen" class="section level6">
-<h6>Blackburn with Darwen</h6>
+<div id="barnsley" class="section level6">
+<h6>Barnsley</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-1.png" width="672" /></p>
 </div>
-<div id="blackpool" class="section level6">
-<h6>Blackpool</h6>
+<div id="bolton" class="section level6">
+<h6>Bolton</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-2.png" width="672" /></p>
 </div>
-<div id="burnley" class="section level6">
-<h6>Burnley</h6>
+<div id="bury" class="section level6">
+<h6>Bury</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-3.png" width="672" /></p>
 </div>
-<div id="chorley" class="section level6">
-<h6>Chorley</h6>
+<div id="doncaster" class="section level6">
+<h6>Doncaster</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-4.png" width="672" /></p>
 </div>
-<div id="fylde" class="section level6">
-<h6>Fylde</h6>
+<div id="manchester" class="section level6">
+<h6>Manchester</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-5.png" width="672" /></p>
 </div>
-<div id="halton-1" class="section level6">
-<h6>Halton</h6>
+<div id="oldham" class="section level6">
+<h6>Oldham</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-6.png" width="672" /></p>
 </div>
-<div id="hyndburn" class="section level6">
-<h6>Hyndburn</h6>
+<div id="rochdale" class="section level6">
+<h6>Rochdale</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-7.png" width="672" /></p>
 </div>
-<div id="knowsley-1" class="section level6">
-<h6>Knowsley</h6>
+<div id="rotherham" class="section level6">
+<h6>Rotherham</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-8.png" width="672" /></p>
 </div>
-<div id="lancaster" class="section level6">
-<h6>Lancaster</h6>
+<div id="salford" class="section level6">
+<h6>Salford</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-9.png" width="672" /></p>
 </div>
-<div id="liverpool-1" class="section level6">
-<h6>Liverpool</h6>
+<div id="sheffield" class="section level6">
+<h6>Sheffield</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-10.png" width="672" /></p>
 </div>
-<div id="pendle" class="section level6">
-<h6>Pendle</h6>
+<div id="stockport" class="section level6">
+<h6>Stockport</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-11.png" width="672" /></p>
 </div>
-<div id="preston" class="section level6">
-<h6>Preston</h6>
+<div id="tameside" class="section level6">
+<h6>Tameside</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-12.png" width="672" /></p>
 </div>
-<div id="ribble-valley" class="section level6">
-<h6>Ribble Valley</h6>
+<div id="trafford" class="section level6">
+<h6>Trafford</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-13.png" width="672" /></p>
 </div>
-<div id="rossendale" class="section level6">
-<h6>Rossendale</h6>
+<div id="wigan" class="section level6">
+<h6>Wigan</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-14.png" width="672" /></p>
-</div>
-<div id="sefton-1" class="section level6">
-<h6>Sefton</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-15.png" width="672" /></p>
-</div>
-<div id="south-ribble" class="section level6">
-<h6>South Ribble</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-16.png" width="672" /></p>
-</div>
-<div id="st.-helens-1" class="section level6">
-<h6>St. Helens</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-17.png" width="672" /></p>
-</div>
-<div id="west-lancashire" class="section level6">
-<h6>West Lancashire</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-18.png" width="672" /></p>
-</div>
-<div id="wirral-1" class="section level6">
-<h6>Wirral</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-19.png" width="672" /></p>
-</div>
-<div id="wyre" class="section level6">
-<h6>Wyre</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/upcoming%20tier%203%20restrictions-20.png" width="672" /></p>
 </div>
 </div>
 </div>
@@ -1101,7 +1143,7 @@ summary {
 <h6>Barnet</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-3.png" width="672" /></p>
 </div>
-<div id="barnsley" class="section level6">
+<div id="barnsley-1" class="section level6">
 <h6>Barnsley</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-4.png" width="672" /></p>
 </div>
@@ -1125,421 +1167,365 @@ summary {
 <h6>Birmingham</h6>
 <p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-9.png" width="672" /></p>
 </div>
-<div id="blackburn-with-darwen-1" class="section level6">
-<h6>Blackburn with Darwen</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-10.png" width="672" /></p>
-</div>
-<div id="blackpool-1" class="section level6">
-<h6>Blackpool</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-11.png" width="672" /></p>
-</div>
-<div id="bolton" class="section level6">
+<div id="bolton-1" class="section level6">
 <h6>Bolton</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-12.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-10.png" width="672" /></p>
 </div>
 <div id="bradford" class="section level6">
 <h6>Bradford</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-13.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-11.png" width="672" /></p>
 </div>
 <div id="braintree" class="section level6">
 <h6>Braintree</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-14.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-12.png" width="672" /></p>
 </div>
 <div id="brent" class="section level6">
 <h6>Brent</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-15.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-13.png" width="672" /></p>
 </div>
 <div id="brentwood" class="section level6">
 <h6>Brentwood</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-16.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-14.png" width="672" /></p>
 </div>
 <div id="bromley" class="section level6">
 <h6>Bromley</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-17.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-15.png" width="672" /></p>
 </div>
 <div id="broxtowe" class="section level6">
 <h6>Broxtowe</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-18.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-16.png" width="672" /></p>
 </div>
-<div id="burnley-1" class="section level6">
-<h6>Burnley</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-19.png" width="672" /></p>
-</div>
-<div id="bury" class="section level6">
+<div id="bury-1" class="section level6">
 <h6>Bury</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-20.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-17.png" width="672" /></p>
 </div>
 <div id="calderdale" class="section level6">
 <h6>Calderdale</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-21.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-18.png" width="672" /></p>
 </div>
 <div id="camden" class="section level6">
 <h6>Camden</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-22.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-19.png" width="672" /></p>
 </div>
 <div id="castle-point" class="section level6">
 <h6>Castle Point</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-23.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-20.png" width="672" /></p>
 </div>
 <div id="chelmsford" class="section level6">
 <h6>Chelmsford</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-24.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-21.png" width="672" /></p>
 </div>
 <div id="cheshire-east" class="section level6">
 <h6>Cheshire East</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-25.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-22.png" width="672" /></p>
 </div>
 <div id="cheshire-west-and-chester" class="section level6">
 <h6>Cheshire West and Chester</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-26.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-23.png" width="672" /></p>
 </div>
 <div id="chesterfield" class="section level6">
 <h6>Chesterfield</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-27.png" width="672" /></p>
-</div>
-<div id="chorley-1" class="section level6">
-<h6>Chorley</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-28.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-24.png" width="672" /></p>
 </div>
 <div id="colchester" class="section level6">
 <h6>Colchester</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-29.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-25.png" width="672" /></p>
 </div>
 <div id="county-durham" class="section level6">
 <h6>County Durham</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-30.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-26.png" width="672" /></p>
 </div>
 <div id="croydon" class="section level6">
 <h6>Croydon</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-31.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-27.png" width="672" /></p>
 </div>
 <div id="darlington" class="section level6">
 <h6>Darlington</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-32.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-28.png" width="672" /></p>
 </div>
-<div id="doncaster" class="section level6">
+<div id="doncaster-1" class="section level6">
 <h6>Doncaster</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-33.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-29.png" width="672" /></p>
 </div>
 <div id="ealing" class="section level6">
 <h6>Ealing</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-34.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-30.png" width="672" /></p>
 </div>
 <div id="elmbridge" class="section level6">
 <h6>Elmbridge</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-35.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-31.png" width="672" /></p>
 </div>
 <div id="enfield" class="section level6">
 <h6>Enfield</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-36.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-32.png" width="672" /></p>
 </div>
 <div id="epping-forest" class="section level6">
 <h6>Epping Forest</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-37.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-33.png" width="672" /></p>
 </div>
 <div id="erewash" class="section level6">
 <h6>Erewash</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-38.png" width="672" /></p>
-</div>
-<div id="fylde-1" class="section level6">
-<h6>Fylde</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-39.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-34.png" width="672" /></p>
 </div>
 <div id="gateshead" class="section level6">
 <h6>Gateshead</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-40.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-35.png" width="672" /></p>
 </div>
 <div id="gedling" class="section level6">
 <h6>Gedling</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-41.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-36.png" width="672" /></p>
 </div>
 <div id="greenwich" class="section level6">
 <h6>Greenwich</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-42.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-37.png" width="672" /></p>
 </div>
 <div id="hammersmith-and-fulham" class="section level6">
 <h6>Hammersmith and Fulham</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-43.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-38.png" width="672" /></p>
 </div>
 <div id="haringey" class="section level6">
 <h6>Haringey</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-44.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-39.png" width="672" /></p>
 </div>
 <div id="harlow" class="section level6">
 <h6>Harlow</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-45.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-40.png" width="672" /></p>
 </div>
 <div id="harrow" class="section level6">
 <h6>Harrow</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-46.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-41.png" width="672" /></p>
 </div>
 <div id="hartlepool" class="section level6">
 <h6>Hartlepool</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-47.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-42.png" width="672" /></p>
 </div>
 <div id="havering" class="section level6">
 <h6>Havering</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-48.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-43.png" width="672" /></p>
 </div>
 <div id="high-peak" class="section level6">
 <h6>High Peak</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-49.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-44.png" width="672" /></p>
 </div>
 <div id="hillingdon" class="section level6">
 <h6>Hillingdon</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-50.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-45.png" width="672" /></p>
 </div>
 <div id="hounslow" class="section level6">
 <h6>Hounslow</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-51.png" width="672" /></p>
-</div>
-<div id="hyndburn-1" class="section level6">
-<h6>Hyndburn</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-52.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-46.png" width="672" /></p>
 </div>
 <div id="islington" class="section level6">
 <h6>Islington</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-53.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-47.png" width="672" /></p>
 </div>
 <div id="kensington-and-chelsea" class="section level6">
 <h6>Kensington and Chelsea</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-54.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-48.png" width="672" /></p>
 </div>
 <div id="kingston-upon-thames" class="section level6">
 <h6>Kingston upon Thames</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-55.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-49.png" width="672" /></p>
 </div>
 <div id="kirklees" class="section level6">
 <h6>Kirklees</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-56.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-50.png" width="672" /></p>
 </div>
 <div id="lambeth" class="section level6">
 <h6>Lambeth</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-57.png" width="672" /></p>
-</div>
-<div id="lancaster-1" class="section level6">
-<h6>Lancaster</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-58.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-51.png" width="672" /></p>
 </div>
 <div id="leeds" class="section level6">
 <h6>Leeds</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-59.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-52.png" width="672" /></p>
 </div>
 <div id="leicester" class="section level6">
 <h6>Leicester</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-60.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-53.png" width="672" /></p>
 </div>
 <div id="lewisham" class="section level6">
 <h6>Lewisham</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-61.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-54.png" width="672" /></p>
 </div>
 <div id="maldon" class="section level6">
 <h6>Maldon</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-62.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-55.png" width="672" /></p>
 </div>
-<div id="manchester" class="section level6">
+<div id="manchester-1" class="section level6">
 <h6>Manchester</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-63.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-56.png" width="672" /></p>
 </div>
 <div id="mansfield" class="section level6">
 <h6>Mansfield</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-64.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-57.png" width="672" /></p>
 </div>
 <div id="merton" class="section level6">
 <h6>Merton</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-65.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-58.png" width="672" /></p>
 </div>
 <div id="middlesbrough" class="section level6">
 <h6>Middlesbrough</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-66.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-59.png" width="672" /></p>
 </div>
 <div id="newark-and-sherwood" class="section level6">
 <h6>Newark and Sherwood</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-67.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-60.png" width="672" /></p>
 </div>
 <div id="newcastle-upon-tyne" class="section level6">
 <h6>Newcastle upon Tyne</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-68.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-61.png" width="672" /></p>
 </div>
 <div id="newham" class="section level6">
 <h6>Newham</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-69.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-62.png" width="672" /></p>
 </div>
 <div id="north-east-derbyshire" class="section level6">
 <h6>North East Derbyshire</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-70.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-63.png" width="672" /></p>
 </div>
 <div id="north-tyneside" class="section level6">
 <h6>North Tyneside</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-71.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-64.png" width="672" /></p>
 </div>
 <div id="northumberland" class="section level6">
 <h6>Northumberland</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-72.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-65.png" width="672" /></p>
 </div>
 <div id="nottingham" class="section level6">
 <h6>Nottingham</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-73.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-66.png" width="672" /></p>
 </div>
 <div id="oadby-and-wigston" class="section level6">
 <h6>Oadby and Wigston</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-74.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-67.png" width="672" /></p>
 </div>
-<div id="oldham" class="section level6">
+<div id="oldham-1" class="section level6">
 <h6>Oldham</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-75.png" width="672" /></p>
-</div>
-<div id="pendle-1" class="section level6">
-<h6>Pendle</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-76.png" width="672" /></p>
-</div>
-<div id="preston-1" class="section level6">
-<h6>Preston</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-77.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-68.png" width="672" /></p>
 </div>
 <div id="redbridge" class="section level6">
 <h6>Redbridge</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-78.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-69.png" width="672" /></p>
 </div>
 <div id="redcar-and-cleveland" class="section level6">
 <h6>Redcar and Cleveland</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-79.png" width="672" /></p>
-</div>
-<div id="ribble-valley-1" class="section level6">
-<h6>Ribble Valley</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-80.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-70.png" width="672" /></p>
 </div>
 <div id="richmond-upon-thames" class="section level6">
 <h6>Richmond upon Thames</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-81.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-71.png" width="672" /></p>
 </div>
-<div id="rochdale" class="section level6">
+<div id="rochdale-1" class="section level6">
 <h6>Rochdale</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-82.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-72.png" width="672" /></p>
 </div>
 <div id="rochford" class="section level6">
 <h6>Rochford</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-83.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-73.png" width="672" /></p>
 </div>
-<div id="rossendale-1" class="section level6">
-<h6>Rossendale</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-84.png" width="672" /></p>
-</div>
-<div id="rotherham" class="section level6">
+<div id="rotherham-1" class="section level6">
 <h6>Rotherham</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-85.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-74.png" width="672" /></p>
 </div>
 <div id="rushcliffe" class="section level6">
 <h6>Rushcliffe</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-86.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-75.png" width="672" /></p>
 </div>
-<div id="salford" class="section level6">
+<div id="salford-1" class="section level6">
 <h6>Salford</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-87.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-76.png" width="672" /></p>
 </div>
 <div id="sandwell" class="section level6">
 <h6>Sandwell</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-88.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-77.png" width="672" /></p>
 </div>
-<div id="sheffield" class="section level6">
+<div id="sheffield-1" class="section level6">
 <h6>Sheffield</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-89.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-78.png" width="672" /></p>
 </div>
 <div id="solihull" class="section level6">
 <h6>Solihull</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-90.png" width="672" /></p>
-</div>
-<div id="south-ribble-1" class="section level6">
-<h6>South Ribble</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-91.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-79.png" width="672" /></p>
 </div>
 <div id="south-tyneside" class="section level6">
 <h6>South Tyneside</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-92.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-80.png" width="672" /></p>
 </div>
 <div id="southwark" class="section level6">
 <h6>Southwark</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-93.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-81.png" width="672" /></p>
 </div>
-<div id="stockport" class="section level6">
+<div id="stockport-1" class="section level6">
 <h6>Stockport</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-94.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-82.png" width="672" /></p>
 </div>
 <div id="stockton-on-tees" class="section level6">
 <h6>Stockton-on-Tees</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-95.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-83.png" width="672" /></p>
 </div>
 <div id="sunderland" class="section level6">
 <h6>Sunderland</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-96.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-84.png" width="672" /></p>
 </div>
 <div id="sutton" class="section level6">
 <h6>Sutton</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-97.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-85.png" width="672" /></p>
 </div>
-<div id="tameside" class="section level6">
+<div id="tameside-1" class="section level6">
 <h6>Tameside</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-98.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-86.png" width="672" /></p>
 </div>
 <div id="tendring" class="section level6">
 <h6>Tendring</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-99.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-87.png" width="672" /></p>
 </div>
 <div id="tower-hamlets" class="section level6">
 <h6>Tower Hamlets</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-100.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-88.png" width="672" /></p>
 </div>
-<div id="trafford" class="section level6">
+<div id="trafford-1" class="section level6">
 <h6>Trafford</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-101.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-89.png" width="672" /></p>
 </div>
 <div id="uttlesford" class="section level6">
 <h6>Uttlesford</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-102.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-90.png" width="672" /></p>
 </div>
 <div id="wakefield" class="section level6">
 <h6>Wakefield</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-103.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-91.png" width="672" /></p>
 </div>
 <div id="walsall" class="section level6">
 <h6>Walsall</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-104.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-92.png" width="672" /></p>
 </div>
 <div id="waltham-forest" class="section level6">
 <h6>Waltham Forest</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-105.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-93.png" width="672" /></p>
 </div>
 <div id="wandsworth" class="section level6">
 <h6>Wandsworth</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-106.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-94.png" width="672" /></p>
 </div>
 <div id="warrington" class="section level6">
 <h6>Warrington</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-107.png" width="672" /></p>
-</div>
-<div id="west-lancashire-1" class="section level6">
-<h6>West Lancashire</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-108.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-95.png" width="672" /></p>
 </div>
 <div id="westminster" class="section level6">
 <h6>Westminster</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-109.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-96.png" width="672" /></p>
 </div>
-<div id="wigan" class="section level6">
+<div id="wigan-1" class="section level6">
 <h6>Wigan</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-110.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-97.png" width="672" /></p>
 </div>
 <div id="wolverhampton" class="section level6">
 <h6>Wolverhampton</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-111.png" width="672" /></p>
-</div>
-<div id="wyre-1" class="section level6">
-<h6>Wyre</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-112.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-98.png" width="672" /></p>
 </div>
 <div id="york" class="section level6">
 <h6>York</h6>
-<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-113.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/current%20tier%202%20restrictions-99.png" width="672" /></p>
 </div>
 </div>
 <div id="upcoming-tier-2-restrictions" class="section level5">
@@ -1590,190 +1576,214 @@ summary {
 </thead>
 <tbody>
 <tr class="odd">
+<td align="left">2020-10-20</td>
+<td align="right">0.1808783</td>
+<td align="right">43.77254</td>
+<td align="right">-0.08</td>
+<td align="right">-0.10</td>
+</tr>
+<tr class="even">
+<td align="left">2020-10-19</td>
+<td align="right">78.8629268</td>
+<td align="right">47.46246</td>
+<td align="right">-0.05</td>
+<td align="right">-0.07</td>
+</tr>
+<tr class="odd">
 <td align="left">2020-10-18</td>
-<td align="right">0.7235131</td>
-<td align="right">35.72346</td>
-<td align="right">-0.22</td>
-<td align="right">-0.12</td>
+<td align="right">45.5813247</td>
+<td align="right">50.01284</td>
+<td align="right">-0.08</td>
+<td align="right">-0.06</td>
 </tr>
 <tr class="even">
 <td align="left">2020-10-17</td>
-<td align="right">36.8991676</td>
-<td align="right">43.59166</td>
-<td align="right">-0.10</td>
-<td align="right">-0.10</td>
+<td align="right">50.4650380</td>
+<td align="right">53.79837</td>
+<td align="right">-0.18</td>
+<td align="right">-0.05</td>
 </tr>
 <tr class="odd">
 <td align="left">2020-10-16</td>
-<td align="right">47.0283509</td>
-<td align="right">47.87245</td>
-<td align="right">-0.06</td>
-<td align="right">-0.09</td>
-</tr>
-<tr class="even">
-<td align="left">2020-10-15</td>
-<td align="right">58.2428038</td>
-<td align="right">50.51672</td>
-<td align="right">-0.10</td>
-<td align="right">-0.08</td>
-</tr>
-<tr class="odd">
-<td align="left">2020-10-14</td>
-<td align="right">75.0644831</td>
-<td align="right">55.81387</td>
-<td align="right">-0.03</td>
-<td align="right">-0.06</td>
+<td align="right">62.2221258</td>
+<td align="right">63.74667</td>
+<td align="right">0.03</td>
+<td align="right">-0.04</td>
 </tr>
 </tbody>
 </table>
 <p>Now let’s narrow down to places that have seen concerning levels of cases over the last week.</p>
 <div id="widespread-infection" class="section level3">
 <h3>Widespread infection</h3>
-<p>The most recent date is 2020-10-18 so one week ago is 2020-10-12. First let’s look at those who had widespread daily rates (over 7 cases / day / 100,000 population) at some point in the last week.</p>
-<p>There are 261 areas where there is widespread infection, 142 of which aren’t currently in lockdown. Those are:</p>
+<p>The most recent date is 2020-10-20 so one week ago is 2020-10-14. First let’s look at those who had widespread daily rates (over 7 cases / day / 100,000 population) at some point in the last week.</p>
+<p>There are 285 areas where there is widespread infection, 166 of which aren’t currently in lockdown. Those are:</p>
 <ul>
 <li>Charnwood</li>
 <li>North East Lincolnshire</li>
 <li>Bristol, City of</li>
 <li>Cannock Chase</li>
-<li>Exeter</li>
-<li>Coventry</li>
-<li>Selby</li>
-<li>Harrogate</li>
-<li>South Staffordshire</li>
-<li>Staffordshire Moorlands</li>
-<li>Stafford</li>
 <li>Stoke-on-Trent</li>
-<li>Bromsgrove</li>
-<li>Eden</li>
-<li>Blaby</li>
-<li>Lincoln</li>
-<li>Bolsover</li>
-<li>East Riding of Yorkshire</li>
+<li>South Staffordshire</li>
 <li>Carlisle</li>
-<li>Derby</li>
-<li>North Lincolnshire</li>
-<li>Newcastle-under-Lyme</li>
+<li>Staffordshire Moorlands</li>
 <li>Amber Valley</li>
-<li>Hackney and City of London</li>
-<li>Slough</li>
+<li>Bolsover</li>
+<li>Newcastle-under-Lyme</li>
+<li>Selby</li>
 <li>South Derbyshire</li>
-<li>Warwick</li>
-<li>Tamworth</li>
-<li>Cambridge</li>
+<li>Eden</li>
+<li>Coventry</li>
+<li>Exeter</li>
 <li>Craven</li>
-<li>Telford and Wrekin</li>
-<li>Hambleton</li>
-<li>Northampton</li>
-<li>Luton</li>
-<li>Dudley</li>
-<li>Oxford</li>
-<li>Kingston upon Hull, City of</li>
-<li>Windsor and Maidenhead</li>
-<li>Lichfield</li>
-<li>Redditch</li>
-<li>South Lakeland</li>
-<li>Hinckley and Bosworth</li>
-<li>East Staffordshire</li>
-<li>Melton</li>
-<li>Portsmouth</li>
-<li>Harborough</li>
-<li>Bournemouth, Christchurch and Poole</li>
-<li>Boston</li>
-<li>Hertsmere</li>
-<li>South Kesteven</li>
-<li>Derbyshire Dales</li>
-<li>Three Rivers</li>
-<li>Watford</li>
-<li>Wellingborough</li>
-<li>Ryedale</li>
-<li>Norwich</li>
-<li>Thurrock</li>
-<li>Bath and North East Somerset</li>
-<li>Rugby</li>
-<li>Broxbourne</li>
-<li>Stratford-on-Avon</li>
-<li>Rushmoor</li>
-<li>Scarborough</li>
+<li>East Riding of Yorkshire</li>
+<li>Lincoln</li>
+<li>Bromsgrove</li>
+<li>North Lincolnshire</li>
+<li>Stafford</li>
+<li>Derby</li>
+<li>Hackney and City of London</li>
+<li>Warwick</li>
+<li>Harrogate</li>
 <li>North Warwickshire</li>
+<li>Blaby</li>
+<li>Telford and Wrekin</li>
+<li>Slough</li>
+<li>Lichfield</li>
+<li>Kingston upon Hull, City of</li>
+<li>Dudley</li>
+<li>Tamworth</li>
+<li>East Staffordshire</li>
+<li>Cambridge</li>
+<li>Windsor and Maidenhead</li>
+<li>Luton</li>
+<li>Bournemouth, Christchurch and Poole</li>
+<li>Derbyshire Dales</li>
+<li>Hambleton</li>
+<li>South Lakeland</li>
+<li>Northampton</li>
+<li>Portsmouth</li>
+<li>Oxford</li>
+<li>Three Rivers</li>
+<li>Wellingborough</li>
+<li>Rushmoor</li>
+<li>Hinckley and Bosworth</li>
+<li>Melton</li>
+<li>Redditch</li>
+<li>Thurrock</li>
+<li>Harborough</li>
+<li>Broxbourne</li>
+<li>South Kesteven</li>
+<li>Nuneaton and Bedworth</li>
+<li>Norwich</li>
+<li>Rugby</li>
+<li>Stratford-on-Avon</li>
+<li>Hertsmere</li>
+<li>Rutland</li>
+<li>Boston</li>
+<li>South Gloucestershire</li>
+<li>Watford</li>
 <li>North West Leicestershire</li>
+<li>Bath and North East Somerset</li>
+<li>Great Yarmouth</li>
+<li>Ryedale</li>
 <li>Swale</li>
 <li>Richmondshire</li>
 <li>Waverley</li>
-<li>East Hertfordshire</li>
-<li>East Northamptonshire</li>
-<li>East Lindsey</li>
-<li>North Kesteven</li>
-<li>South Northamptonshire</li>
-<li>Great Yarmouth</li>
-<li>South Gloucestershire</li>
-<li>Nuneaton and Bedworth</li>
-<li>Welwyn Hatfield</li>
-<li>West Lindsey</li>
-<li>Rutland</li>
-<li>Guildford</li>
-<li>Runnymede</li>
 <li>Kettering</li>
-<li>Mole Valley</li>
-<li>Epsom and Ewell</li>
-<li>Shropshire</li>
-<li>Reading</li>
+<li>Welwyn Hatfield</li>
+<li>Torbay</li>
+<li>Plymouth</li>
+<li>East Lindsey</li>
+<li>Scarborough</li>
+<li>South Northamptonshire</li>
+<li>East Northamptonshire</li>
+<li>Woking</li>
+<li>North Kesteven</li>
+<li>Worcester</li>
+<li>East Hertfordshire</li>
 <li>Peterborough</li>
-<li>Wyre Forest</li>
+<li>Runnymede</li>
 <li>Brighton and Hove</li>
 <li>Wychavon</li>
+<li>Reading</li>
+<li>South Holland</li>
 <li>Bedford</li>
-<li>Woking</li>
-<li>Plymouth</li>
-<li>Dacorum</li>
+<li>Epsom and Ewell</li>
+<li>Guildford</li>
+<li>Copeland</li>
+<li>Corby</li>
+<li>Mole Valley</li>
+<li>Shropshire</li>
 <li>Cherwell</li>
-<li>Daventry</li>
 <li>Bracknell Forest</li>
-<li>South Oxfordshire</li>
-<li>Wokingham</li>
 <li>Surrey Heath</li>
-<li>Torbay</li>
-<li>Southend-on-Sea</li>
-<li>Worcester</li>
+<li>West Lindsey</li>
+<li>Reigate and Banstead</li>
+<li>Wokingham</li>
+<li>Winchester</li>
+<li>Wyre Forest</li>
+<li>Eastleigh</li>
+<li>Dacorum</li>
 <li>West Oxfordshire</li>
+<li>Spelthorne</li>
+<li>Tandridge</li>
+<li>South Oxfordshire</li>
+<li>Malvern Hills</li>
+<li>Gloucester</li>
+<li>Southend-on-Sea</li>
 <li>St Albans</li>
 <li>Vale of White Horse</li>
-<li>Spelthorne</li>
-<li>Cotswold</li>
-<li>Copeland</li>
-<li>Sevenoaks</li>
-<li>Reigate and Banstead</li>
-<li>Tandridge</li>
-<li>Winchester</li>
-<li>Corby</li>
-<li>Eastleigh</li>
-<li>Gloucester</li>
-<li>Babergh</li>
-<li>Mid Suffolk</li>
-<li>Hart</li>
-<li>Dorset</li>
-<li>New Forest</li>
-<li>Cheltenham</li>
-<li>South Holland</li>
-<li>North Hertfordshire</li>
-<li>Milton Keynes</li>
+<li>Daventry</li>
 <li>Allerdale</li>
-<li>Tunbridge Wells</li>
-<li>South Cambridgeshire</li>
-<li>Breckland</li>
-<li>Horsham</li>
-<li>Test Valley</li>
-<li>Central Bedfordshire</li>
-<li>Crawley</li>
 <li>Southampton</li>
-<li>North Devon</li>
-<li>East Cambridgeshire</li>
-<li>Wealden</li>
-<li>Sedgemoor</li>
+<li>Fareham</li>
+<li>Dorset</li>
+<li>Test Valley</li>
+<li>New Forest</li>
+<li>North Hertfordshire</li>
+<li>Breckland</li>
+<li>West Suffolk</li>
+<li>Milton Keynes</li>
 <li>North Somerset</li>
+<li>Swindon</li>
+<li>Hart</li>
+<li>Sevenoaks</li>
 <li>Wiltshire</li>
-<li>Huntingdonshire</li>
+<li>Mid Suffolk</li>
+<li>Ipswich</li>
+<li>Cheltenham</li>
+<li>Basingstoke and Deane</li>
+<li>East Devon</li>
+<li>Central Bedfordshire</li>
+<li>Cotswold</li>
+<li>Wealden</li>
+<li>Stevenage</li>
+<li>Dartford</li>
 <li>South Hams</li>
+<li>Babergh</li>
+<li>Crawley</li>
+<li>South Cambridgeshire</li>
+<li>Horsham</li>
+<li>West Devon</li>
+<li>Gravesham</li>
+<li>Huntingdonshire</li>
+<li>West Berkshire</li>
+<li>Mid Devon</li>
+<li>Herefordshire, County of</li>
+<li>Forest of Dean</li>
+<li>Sedgemoor</li>
+<li>Dover</li>
+<li>Eastbourne</li>
+<li>Stroud</li>
+<li>Teignbridge</li>
+<li>Broadland</li>
+<li>South Norfolk</li>
+<li>Thanet</li>
+<li>Lewes</li>
+<li>East Hampshire</li>
+<li>Tewkesbury</li>
+<li>North Devon</li>
+<li>Fenland</li>
 </ul>
 <p>Now we’ll create charts for those places where there is widespread infection that do not currently have additional restrictions (some of which might be duplicates of the graphs above, because they previously did have local restrictions):</p>
 <div id="charnwood-1" class="section level4">
@@ -1792,573 +1802,669 @@ summary {
 <h4>Cannock Chase</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-4.png" width="672" /></p>
 </div>
-<div id="exeter" class="section level4">
-<h4>Exeter</h4>
+<div id="stoke-on-trent" class="section level4">
+<h4>Stoke-on-Trent</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-5.png" width="672" /></p>
-</div>
-<div id="coventry" class="section level4">
-<h4>Coventry</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-6.png" width="672" /></p>
-</div>
-<div id="selby" class="section level4">
-<h4>Selby</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-7.png" width="672" /></p>
-</div>
-<div id="harrogate" class="section level4">
-<h4>Harrogate</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-8.png" width="672" /></p>
 </div>
 <div id="south-staffordshire" class="section level4">
 <h4>South Staffordshire</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-9.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-6.png" width="672" /></p>
+</div>
+<div id="carlisle" class="section level4">
+<h4>Carlisle</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-7.png" width="672" /></p>
 </div>
 <div id="staffordshire-moorlands" class="section level4">
 <h4>Staffordshire Moorlands</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-8.png" width="672" /></p>
+</div>
+<div id="amber-valley" class="section level4">
+<h4>Amber Valley</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-9.png" width="672" /></p>
+</div>
+<div id="bolsover" class="section level4">
+<h4>Bolsover</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-10.png" width="672" /></p>
 </div>
-<div id="stafford" class="section level4">
-<h4>Stafford</h4>
+<div id="newcastle-under-lyme" class="section level4">
+<h4>Newcastle-under-Lyme</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-11.png" width="672" /></p>
 </div>
-<div id="stoke-on-trent" class="section level4">
-<h4>Stoke-on-Trent</h4>
+<div id="selby" class="section level4">
+<h4>Selby</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-12.png" width="672" /></p>
 </div>
-<div id="bromsgrove" class="section level4">
-<h4>Bromsgrove</h4>
+<div id="south-derbyshire" class="section level4">
+<h4>South Derbyshire</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-13.png" width="672" /></p>
 </div>
 <div id="eden" class="section level4">
 <h4>Eden</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-14.png" width="672" /></p>
 </div>
-<div id="blaby-1" class="section level4">
-<h4>Blaby</h4>
+<div id="coventry" class="section level4">
+<h4>Coventry</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-15.png" width="672" /></p>
 </div>
-<div id="lincoln" class="section level4">
-<h4>Lincoln</h4>
+<div id="exeter" class="section level4">
+<h4>Exeter</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-16.png" width="672" /></p>
 </div>
-<div id="bolsover" class="section level4">
-<h4>Bolsover</h4>
+<div id="craven" class="section level4">
+<h4>Craven</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-17.png" width="672" /></p>
 </div>
 <div id="east-riding-of-yorkshire" class="section level4">
 <h4>East Riding of Yorkshire</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-18.png" width="672" /></p>
 </div>
-<div id="carlisle" class="section level4">
-<h4>Carlisle</h4>
+<div id="lincoln" class="section level4">
+<h4>Lincoln</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-19.png" width="672" /></p>
 </div>
-<div id="derby" class="section level4">
-<h4>Derby</h4>
+<div id="bromsgrove" class="section level4">
+<h4>Bromsgrove</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-20.png" width="672" /></p>
 </div>
 <div id="north-lincolnshire" class="section level4">
 <h4>North Lincolnshire</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-21.png" width="672" /></p>
 </div>
-<div id="newcastle-under-lyme" class="section level4">
-<h4>Newcastle-under-Lyme</h4>
+<div id="stafford" class="section level4">
+<h4>Stafford</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-22.png" width="672" /></p>
 </div>
-<div id="amber-valley" class="section level4">
-<h4>Amber Valley</h4>
+<div id="derby" class="section level4">
+<h4>Derby</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-23.png" width="672" /></p>
 </div>
 <div id="hackney-and-city-of-london" class="section level4">
 <h4>Hackney and City of London</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-24.png" width="672" /></p>
 </div>
-<div id="slough" class="section level4">
-<h4>Slough</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-25.png" width="672" /></p>
-</div>
-<div id="south-derbyshire" class="section level4">
-<h4>South Derbyshire</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-26.png" width="672" /></p>
-</div>
 <div id="warwick" class="section level4">
 <h4>Warwick</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-27.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-25.png" width="672" /></p>
 </div>
-<div id="tamworth" class="section level4">
-<h4>Tamworth</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-28.png" width="672" /></p>
-</div>
-<div id="cambridge" class="section level4">
-<h4>Cambridge</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-29.png" width="672" /></p>
-</div>
-<div id="craven" class="section level4">
-<h4>Craven</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-30.png" width="672" /></p>
-</div>
-<div id="telford-and-wrekin" class="section level4">
-<h4>Telford and Wrekin</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-31.png" width="672" /></p>
-</div>
-<div id="hambleton" class="section level4">
-<h4>Hambleton</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-32.png" width="672" /></p>
-</div>
-<div id="northampton-1" class="section level4">
-<h4>Northampton</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-33.png" width="672" /></p>
-</div>
-<div id="luton-1" class="section level4">
-<h4>Luton</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-34.png" width="672" /></p>
-</div>
-<div id="dudley" class="section level4">
-<h4>Dudley</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-35.png" width="672" /></p>
-</div>
-<div id="oxford" class="section level4">
-<h4>Oxford</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-36.png" width="672" /></p>
-</div>
-<div id="kingston-upon-hull-city-of" class="section level4">
-<h4>Kingston upon Hull, City of</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-37.png" width="672" /></p>
-</div>
-<div id="windsor-and-maidenhead" class="section level4">
-<h4>Windsor and Maidenhead</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-38.png" width="672" /></p>
-</div>
-<div id="lichfield" class="section level4">
-<h4>Lichfield</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-39.png" width="672" /></p>
-</div>
-<div id="redditch" class="section level4">
-<h4>Redditch</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-40.png" width="672" /></p>
-</div>
-<div id="south-lakeland" class="section level4">
-<h4>South Lakeland</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-41.png" width="672" /></p>
-</div>
-<div id="hinckley-and-bosworth" class="section level4">
-<h4>Hinckley and Bosworth</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-42.png" width="672" /></p>
-</div>
-<div id="east-staffordshire" class="section level4">
-<h4>East Staffordshire</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-43.png" width="672" /></p>
-</div>
-<div id="melton" class="section level4">
-<h4>Melton</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-44.png" width="672" /></p>
-</div>
-<div id="portsmouth" class="section level4">
-<h4>Portsmouth</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-45.png" width="672" /></p>
-</div>
-<div id="harborough" class="section level4">
-<h4>Harborough</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-46.png" width="672" /></p>
-</div>
-<div id="bournemouth-christchurch-and-poole" class="section level4">
-<h4>Bournemouth, Christchurch and Poole</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-47.png" width="672" /></p>
-</div>
-<div id="boston" class="section level4">
-<h4>Boston</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-48.png" width="672" /></p>
-</div>
-<div id="hertsmere" class="section level4">
-<h4>Hertsmere</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-49.png" width="672" /></p>
-</div>
-<div id="south-kesteven" class="section level4">
-<h4>South Kesteven</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-50.png" width="672" /></p>
-</div>
-<div id="derbyshire-dales" class="section level4">
-<h4>Derbyshire Dales</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-51.png" width="672" /></p>
-</div>
-<div id="three-rivers" class="section level4">
-<h4>Three Rivers</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-52.png" width="672" /></p>
-</div>
-<div id="watford" class="section level4">
-<h4>Watford</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-53.png" width="672" /></p>
-</div>
-<div id="wellingborough" class="section level4">
-<h4>Wellingborough</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-54.png" width="672" /></p>
-</div>
-<div id="ryedale" class="section level4">
-<h4>Ryedale</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-55.png" width="672" /></p>
-</div>
-<div id="norwich" class="section level4">
-<h4>Norwich</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-56.png" width="672" /></p>
-</div>
-<div id="thurrock" class="section level4">
-<h4>Thurrock</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-57.png" width="672" /></p>
-</div>
-<div id="bath-and-north-east-somerset" class="section level4">
-<h4>Bath and North East Somerset</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-58.png" width="672" /></p>
-</div>
-<div id="rugby" class="section level4">
-<h4>Rugby</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-59.png" width="672" /></p>
-</div>
-<div id="broxbourne" class="section level4">
-<h4>Broxbourne</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-60.png" width="672" /></p>
-</div>
-<div id="stratford-on-avon" class="section level4">
-<h4>Stratford-on-Avon</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-61.png" width="672" /></p>
-</div>
-<div id="rushmoor" class="section level4">
-<h4>Rushmoor</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-62.png" width="672" /></p>
-</div>
-<div id="scarborough" class="section level4">
-<h4>Scarborough</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-63.png" width="672" /></p>
+<div id="harrogate" class="section level4">
+<h4>Harrogate</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-26.png" width="672" /></p>
 </div>
 <div id="north-warwickshire" class="section level4">
 <h4>North Warwickshire</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-27.png" width="672" /></p>
+</div>
+<div id="blaby-1" class="section level4">
+<h4>Blaby</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-28.png" width="672" /></p>
+</div>
+<div id="telford-and-wrekin" class="section level4">
+<h4>Telford and Wrekin</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-29.png" width="672" /></p>
+</div>
+<div id="slough" class="section level4">
+<h4>Slough</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-30.png" width="672" /></p>
+</div>
+<div id="lichfield" class="section level4">
+<h4>Lichfield</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-31.png" width="672" /></p>
+</div>
+<div id="kingston-upon-hull-city-of" class="section level4">
+<h4>Kingston upon Hull, City of</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-32.png" width="672" /></p>
+</div>
+<div id="dudley" class="section level4">
+<h4>Dudley</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-33.png" width="672" /></p>
+</div>
+<div id="tamworth" class="section level4">
+<h4>Tamworth</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-34.png" width="672" /></p>
+</div>
+<div id="east-staffordshire" class="section level4">
+<h4>East Staffordshire</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-35.png" width="672" /></p>
+</div>
+<div id="cambridge" class="section level4">
+<h4>Cambridge</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-36.png" width="672" /></p>
+</div>
+<div id="windsor-and-maidenhead" class="section level4">
+<h4>Windsor and Maidenhead</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-37.png" width="672" /></p>
+</div>
+<div id="luton-1" class="section level4">
+<h4>Luton</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-38.png" width="672" /></p>
+</div>
+<div id="bournemouth-christchurch-and-poole" class="section level4">
+<h4>Bournemouth, Christchurch and Poole</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-39.png" width="672" /></p>
+</div>
+<div id="derbyshire-dales" class="section level4">
+<h4>Derbyshire Dales</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-40.png" width="672" /></p>
+</div>
+<div id="hambleton" class="section level4">
+<h4>Hambleton</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-41.png" width="672" /></p>
+</div>
+<div id="south-lakeland" class="section level4">
+<h4>South Lakeland</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-42.png" width="672" /></p>
+</div>
+<div id="northampton-1" class="section level4">
+<h4>Northampton</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-43.png" width="672" /></p>
+</div>
+<div id="portsmouth" class="section level4">
+<h4>Portsmouth</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-44.png" width="672" /></p>
+</div>
+<div id="oxford" class="section level4">
+<h4>Oxford</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-45.png" width="672" /></p>
+</div>
+<div id="three-rivers" class="section level4">
+<h4>Three Rivers</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-46.png" width="672" /></p>
+</div>
+<div id="wellingborough" class="section level4">
+<h4>Wellingborough</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-47.png" width="672" /></p>
+</div>
+<div id="rushmoor" class="section level4">
+<h4>Rushmoor</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-48.png" width="672" /></p>
+</div>
+<div id="hinckley-and-bosworth" class="section level4">
+<h4>Hinckley and Bosworth</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-49.png" width="672" /></p>
+</div>
+<div id="melton" class="section level4">
+<h4>Melton</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-50.png" width="672" /></p>
+</div>
+<div id="redditch" class="section level4">
+<h4>Redditch</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-51.png" width="672" /></p>
+</div>
+<div id="thurrock" class="section level4">
+<h4>Thurrock</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-52.png" width="672" /></p>
+</div>
+<div id="harborough" class="section level4">
+<h4>Harborough</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-53.png" width="672" /></p>
+</div>
+<div id="broxbourne" class="section level4">
+<h4>Broxbourne</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-54.png" width="672" /></p>
+</div>
+<div id="south-kesteven" class="section level4">
+<h4>South Kesteven</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-55.png" width="672" /></p>
+</div>
+<div id="nuneaton-and-bedworth" class="section level4">
+<h4>Nuneaton and Bedworth</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-56.png" width="672" /></p>
+</div>
+<div id="norwich" class="section level4">
+<h4>Norwich</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-57.png" width="672" /></p>
+</div>
+<div id="rugby" class="section level4">
+<h4>Rugby</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-58.png" width="672" /></p>
+</div>
+<div id="stratford-on-avon" class="section level4">
+<h4>Stratford-on-Avon</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-59.png" width="672" /></p>
+</div>
+<div id="hertsmere" class="section level4">
+<h4>Hertsmere</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-60.png" width="672" /></p>
+</div>
+<div id="rutland" class="section level4">
+<h4>Rutland</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-61.png" width="672" /></p>
+</div>
+<div id="boston" class="section level4">
+<h4>Boston</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-62.png" width="672" /></p>
+</div>
+<div id="south-gloucestershire" class="section level4">
+<h4>South Gloucestershire</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-63.png" width="672" /></p>
+</div>
+<div id="watford" class="section level4">
+<h4>Watford</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-64.png" width="672" /></p>
 </div>
 <div id="north-west-leicestershire" class="section level4">
 <h4>North West Leicestershire</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-65.png" width="672" /></p>
 </div>
-<div id="swale" class="section level4">
-<h4>Swale</h4>
+<div id="bath-and-north-east-somerset" class="section level4">
+<h4>Bath and North East Somerset</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-66.png" width="672" /></p>
-</div>
-<div id="richmondshire" class="section level4">
-<h4>Richmondshire</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-67.png" width="672" /></p>
-</div>
-<div id="waverley" class="section level4">
-<h4>Waverley</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-68.png" width="672" /></p>
-</div>
-<div id="east-hertfordshire" class="section level4">
-<h4>East Hertfordshire</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-69.png" width="672" /></p>
-</div>
-<div id="east-northamptonshire" class="section level4">
-<h4>East Northamptonshire</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-70.png" width="672" /></p>
-</div>
-<div id="east-lindsey" class="section level4">
-<h4>East Lindsey</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-71.png" width="672" /></p>
-</div>
-<div id="north-kesteven" class="section level4">
-<h4>North Kesteven</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-72.png" width="672" /></p>
-</div>
-<div id="south-northamptonshire" class="section level4">
-<h4>South Northamptonshire</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-73.png" width="672" /></p>
 </div>
 <div id="great-yarmouth" class="section level4">
 <h4>Great Yarmouth</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-74.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-67.png" width="672" /></p>
 </div>
-<div id="south-gloucestershire" class="section level4">
-<h4>South Gloucestershire</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-75.png" width="672" /></p>
+<div id="ryedale" class="section level4">
+<h4>Ryedale</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-68.png" width="672" /></p>
 </div>
-<div id="nuneaton-and-bedworth" class="section level4">
-<h4>Nuneaton and Bedworth</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-76.png" width="672" /></p>
+<div id="swale" class="section level4">
+<h4>Swale</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-69.png" width="672" /></p>
 </div>
-<div id="welwyn-hatfield" class="section level4">
-<h4>Welwyn Hatfield</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-77.png" width="672" /></p>
+<div id="richmondshire" class="section level4">
+<h4>Richmondshire</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-70.png" width="672" /></p>
 </div>
-<div id="west-lindsey" class="section level4">
-<h4>West Lindsey</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-78.png" width="672" /></p>
-</div>
-<div id="rutland" class="section level4">
-<h4>Rutland</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-79.png" width="672" /></p>
-</div>
-<div id="guildford" class="section level4">
-<h4>Guildford</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-80.png" width="672" /></p>
-</div>
-<div id="runnymede" class="section level4">
-<h4>Runnymede</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-81.png" width="672" /></p>
+<div id="waverley" class="section level4">
+<h4>Waverley</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-71.png" width="672" /></p>
 </div>
 <div id="kettering" class="section level4">
 <h4>Kettering</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-82.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-72.png" width="672" /></p>
 </div>
-<div id="mole-valley" class="section level4">
-<h4>Mole Valley</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-83.png" width="672" /></p>
-</div>
-<div id="epsom-and-ewell" class="section level4">
-<h4>Epsom and Ewell</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-84.png" width="672" /></p>
-</div>
-<div id="shropshire" class="section level4">
-<h4>Shropshire</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-85.png" width="672" /></p>
-</div>
-<div id="reading" class="section level4">
-<h4>Reading</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-86.png" width="672" /></p>
-</div>
-<div id="peterborough" class="section level4">
-<h4>Peterborough</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-87.png" width="672" /></p>
-</div>
-<div id="wyre-forest" class="section level4">
-<h4>Wyre Forest</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-88.png" width="672" /></p>
-</div>
-<div id="brighton-and-hove" class="section level4">
-<h4>Brighton and Hove</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-89.png" width="672" /></p>
-</div>
-<div id="wychavon" class="section level4">
-<h4>Wychavon</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-90.png" width="672" /></p>
-</div>
-<div id="bedford" class="section level4">
-<h4>Bedford</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-91.png" width="672" /></p>
-</div>
-<div id="woking" class="section level4">
-<h4>Woking</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-92.png" width="672" /></p>
-</div>
-<div id="plymouth" class="section level4">
-<h4>Plymouth</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-93.png" width="672" /></p>
-</div>
-<div id="dacorum" class="section level4">
-<h4>Dacorum</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-94.png" width="672" /></p>
-</div>
-<div id="cherwell" class="section level4">
-<h4>Cherwell</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-95.png" width="672" /></p>
-</div>
-<div id="daventry" class="section level4">
-<h4>Daventry</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-96.png" width="672" /></p>
-</div>
-<div id="bracknell-forest" class="section level4">
-<h4>Bracknell Forest</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-97.png" width="672" /></p>
-</div>
-<div id="south-oxfordshire" class="section level4">
-<h4>South Oxfordshire</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-98.png" width="672" /></p>
-</div>
-<div id="wokingham" class="section level4">
-<h4>Wokingham</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-99.png" width="672" /></p>
-</div>
-<div id="surrey-heath" class="section level4">
-<h4>Surrey Heath</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-100.png" width="672" /></p>
+<div id="welwyn-hatfield" class="section level4">
+<h4>Welwyn Hatfield</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-73.png" width="672" /></p>
 </div>
 <div id="torbay" class="section level4">
 <h4>Torbay</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-101.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-74.png" width="672" /></p>
 </div>
-<div id="southend-on-sea" class="section level4">
-<h4>Southend-on-Sea</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-102.png" width="672" /></p>
+<div id="plymouth" class="section level4">
+<h4>Plymouth</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-75.png" width="672" /></p>
+</div>
+<div id="east-lindsey" class="section level4">
+<h4>East Lindsey</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-76.png" width="672" /></p>
+</div>
+<div id="scarborough" class="section level4">
+<h4>Scarborough</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-77.png" width="672" /></p>
+</div>
+<div id="south-northamptonshire" class="section level4">
+<h4>South Northamptonshire</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-78.png" width="672" /></p>
+</div>
+<div id="east-northamptonshire" class="section level4">
+<h4>East Northamptonshire</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-79.png" width="672" /></p>
+</div>
+<div id="woking" class="section level4">
+<h4>Woking</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-80.png" width="672" /></p>
+</div>
+<div id="north-kesteven" class="section level4">
+<h4>North Kesteven</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-81.png" width="672" /></p>
 </div>
 <div id="worcester" class="section level4">
 <h4>Worcester</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-103.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-82.png" width="672" /></p>
 </div>
-<div id="west-oxfordshire" class="section level4">
-<h4>West Oxfordshire</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-104.png" width="672" /></p>
+<div id="east-hertfordshire" class="section level4">
+<h4>East Hertfordshire</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-83.png" width="672" /></p>
 </div>
-<div id="st-albans" class="section level4">
-<h4>St Albans</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-105.png" width="672" /></p>
+<div id="peterborough" class="section level4">
+<h4>Peterborough</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-84.png" width="672" /></p>
 </div>
-<div id="vale-of-white-horse" class="section level4">
-<h4>Vale of White Horse</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-106.png" width="672" /></p>
+<div id="runnymede" class="section level4">
+<h4>Runnymede</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-85.png" width="672" /></p>
 </div>
-<div id="spelthorne" class="section level4">
-<h4>Spelthorne</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-107.png" width="672" /></p>
+<div id="brighton-and-hove" class="section level4">
+<h4>Brighton and Hove</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-86.png" width="672" /></p>
 </div>
-<div id="cotswold" class="section level4">
-<h4>Cotswold</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-108.png" width="672" /></p>
+<div id="wychavon" class="section level4">
+<h4>Wychavon</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-87.png" width="672" /></p>
+</div>
+<div id="reading" class="section level4">
+<h4>Reading</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-88.png" width="672" /></p>
+</div>
+<div id="south-holland" class="section level4">
+<h4>South Holland</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-89.png" width="672" /></p>
+</div>
+<div id="bedford" class="section level4">
+<h4>Bedford</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-90.png" width="672" /></p>
+</div>
+<div id="epsom-and-ewell" class="section level4">
+<h4>Epsom and Ewell</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-91.png" width="672" /></p>
+</div>
+<div id="guildford" class="section level4">
+<h4>Guildford</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-92.png" width="672" /></p>
 </div>
 <div id="copeland" class="section level4">
 <h4>Copeland</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-109.png" width="672" /></p>
-</div>
-<div id="sevenoaks" class="section level4">
-<h4>Sevenoaks</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-110.png" width="672" /></p>
-</div>
-<div id="reigate-and-banstead" class="section level4">
-<h4>Reigate and Banstead</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-111.png" width="672" /></p>
-</div>
-<div id="tandridge" class="section level4">
-<h4>Tandridge</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-112.png" width="672" /></p>
-</div>
-<div id="winchester" class="section level4">
-<h4>Winchester</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-113.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-93.png" width="672" /></p>
 </div>
 <div id="corby" class="section level4">
 <h4>Corby</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-114.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-94.png" width="672" /></p>
+</div>
+<div id="mole-valley" class="section level4">
+<h4>Mole Valley</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-95.png" width="672" /></p>
+</div>
+<div id="shropshire" class="section level4">
+<h4>Shropshire</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-96.png" width="672" /></p>
+</div>
+<div id="cherwell" class="section level4">
+<h4>Cherwell</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-97.png" width="672" /></p>
+</div>
+<div id="bracknell-forest" class="section level4">
+<h4>Bracknell Forest</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-98.png" width="672" /></p>
+</div>
+<div id="surrey-heath" class="section level4">
+<h4>Surrey Heath</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-99.png" width="672" /></p>
+</div>
+<div id="west-lindsey" class="section level4">
+<h4>West Lindsey</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-100.png" width="672" /></p>
+</div>
+<div id="reigate-and-banstead" class="section level4">
+<h4>Reigate and Banstead</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-101.png" width="672" /></p>
+</div>
+<div id="wokingham" class="section level4">
+<h4>Wokingham</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-102.png" width="672" /></p>
+</div>
+<div id="winchester" class="section level4">
+<h4>Winchester</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-103.png" width="672" /></p>
+</div>
+<div id="wyre-forest" class="section level4">
+<h4>Wyre Forest</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-104.png" width="672" /></p>
 </div>
 <div id="eastleigh" class="section level4">
 <h4>Eastleigh</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-115.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-105.png" width="672" /></p>
+</div>
+<div id="dacorum" class="section level4">
+<h4>Dacorum</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-106.png" width="672" /></p>
+</div>
+<div id="west-oxfordshire" class="section level4">
+<h4>West Oxfordshire</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-107.png" width="672" /></p>
+</div>
+<div id="spelthorne" class="section level4">
+<h4>Spelthorne</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-108.png" width="672" /></p>
+</div>
+<div id="tandridge" class="section level4">
+<h4>Tandridge</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-109.png" width="672" /></p>
+</div>
+<div id="south-oxfordshire" class="section level4">
+<h4>South Oxfordshire</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-110.png" width="672" /></p>
+</div>
+<div id="malvern-hills" class="section level4">
+<h4>Malvern Hills</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-111.png" width="672" /></p>
 </div>
 <div id="gloucester" class="section level4">
 <h4>Gloucester</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-112.png" width="672" /></p>
+</div>
+<div id="southend-on-sea" class="section level4">
+<h4>Southend-on-Sea</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-113.png" width="672" /></p>
+</div>
+<div id="st-albans" class="section level4">
+<h4>St Albans</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-114.png" width="672" /></p>
+</div>
+<div id="vale-of-white-horse" class="section level4">
+<h4>Vale of White Horse</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-115.png" width="672" /></p>
+</div>
+<div id="daventry" class="section level4">
+<h4>Daventry</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-116.png" width="672" /></p>
 </div>
-<div id="babergh" class="section level4">
-<h4>Babergh</h4>
+<div id="allerdale" class="section level4">
+<h4>Allerdale</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-117.png" width="672" /></p>
 </div>
-<div id="mid-suffolk" class="section level4">
-<h4>Mid Suffolk</h4>
+<div id="southampton" class="section level4">
+<h4>Southampton</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-118.png" width="672" /></p>
 </div>
-<div id="hart" class="section level4">
-<h4>Hart</h4>
+<div id="fareham" class="section level4">
+<h4>Fareham</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-119.png" width="672" /></p>
 </div>
 <div id="dorset" class="section level4">
 <h4>Dorset</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-120.png" width="672" /></p>
 </div>
-<div id="new-forest" class="section level4">
-<h4>New Forest</h4>
+<div id="test-valley" class="section level4">
+<h4>Test Valley</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-121.png" width="672" /></p>
 </div>
-<div id="cheltenham" class="section level4">
-<h4>Cheltenham</h4>
+<div id="new-forest" class="section level4">
+<h4>New Forest</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-122.png" width="672" /></p>
-</div>
-<div id="south-holland" class="section level4">
-<h4>South Holland</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-123.png" width="672" /></p>
 </div>
 <div id="north-hertfordshire" class="section level4">
 <h4>North Hertfordshire</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-124.png" width="672" /></p>
-</div>
-<div id="milton-keynes" class="section level4">
-<h4>Milton Keynes</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-125.png" width="672" /></p>
-</div>
-<div id="allerdale" class="section level4">
-<h4>Allerdale</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-126.png" width="672" /></p>
-</div>
-<div id="tunbridge-wells" class="section level4">
-<h4>Tunbridge Wells</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-127.png" width="672" /></p>
-</div>
-<div id="south-cambridgeshire" class="section level4">
-<h4>South Cambridgeshire</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-128.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-123.png" width="672" /></p>
 </div>
 <div id="breckland" class="section level4">
 <h4>Breckland</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-129.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-124.png" width="672" /></p>
 </div>
-<div id="horsham" class="section level4">
-<h4>Horsham</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-130.png" width="672" /></p>
+<div id="west-suffolk" class="section level4">
+<h4>West Suffolk</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-125.png" width="672" /></p>
 </div>
-<div id="test-valley" class="section level4">
-<h4>Test Valley</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-131.png" width="672" /></p>
-</div>
-<div id="central-bedfordshire" class="section level4">
-<h4>Central Bedfordshire</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-132.png" width="672" /></p>
-</div>
-<div id="crawley" class="section level4">
-<h4>Crawley</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-133.png" width="672" /></p>
-</div>
-<div id="southampton" class="section level4">
-<h4>Southampton</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-134.png" width="672" /></p>
-</div>
-<div id="north-devon" class="section level4">
-<h4>North Devon</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-135.png" width="672" /></p>
-</div>
-<div id="east-cambridgeshire" class="section level4">
-<h4>East Cambridgeshire</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-136.png" width="672" /></p>
-</div>
-<div id="wealden" class="section level4">
-<h4>Wealden</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-137.png" width="672" /></p>
-</div>
-<div id="sedgemoor" class="section level4">
-<h4>Sedgemoor</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-138.png" width="672" /></p>
+<div id="milton-keynes" class="section level4">
+<h4>Milton Keynes</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-126.png" width="672" /></p>
 </div>
 <div id="north-somerset" class="section level4">
 <h4>North Somerset</h4>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-139.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-127.png" width="672" /></p>
+</div>
+<div id="swindon" class="section level4">
+<h4>Swindon</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-128.png" width="672" /></p>
+</div>
+<div id="hart" class="section level4">
+<h4>Hart</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-129.png" width="672" /></p>
+</div>
+<div id="sevenoaks" class="section level4">
+<h4>Sevenoaks</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-130.png" width="672" /></p>
 </div>
 <div id="wiltshire" class="section level4">
 <h4>Wiltshire</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-131.png" width="672" /></p>
+</div>
+<div id="mid-suffolk" class="section level4">
+<h4>Mid Suffolk</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-132.png" width="672" /></p>
+</div>
+<div id="ipswich" class="section level4">
+<h4>Ipswich</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-133.png" width="672" /></p>
+</div>
+<div id="cheltenham" class="section level4">
+<h4>Cheltenham</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-134.png" width="672" /></p>
+</div>
+<div id="basingstoke-and-deane" class="section level4">
+<h4>Basingstoke and Deane</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-135.png" width="672" /></p>
+</div>
+<div id="east-devon" class="section level4">
+<h4>East Devon</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-136.png" width="672" /></p>
+</div>
+<div id="central-bedfordshire" class="section level4">
+<h4>Central Bedfordshire</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-137.png" width="672" /></p>
+</div>
+<div id="cotswold" class="section level4">
+<h4>Cotswold</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-138.png" width="672" /></p>
+</div>
+<div id="wealden" class="section level4">
+<h4>Wealden</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-139.png" width="672" /></p>
+</div>
+<div id="stevenage" class="section level4">
+<h4>Stevenage</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-140.png" width="672" /></p>
 </div>
-<div id="huntingdonshire" class="section level4">
-<h4>Huntingdonshire</h4>
+<div id="dartford" class="section level4">
+<h4>Dartford</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-141.png" width="672" /></p>
 </div>
 <div id="south-hams" class="section level4">
 <h4>South Hams</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-142.png" width="672" /></p>
 </div>
+<div id="babergh" class="section level4">
+<h4>Babergh</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-143.png" width="672" /></p>
+</div>
+<div id="crawley" class="section level4">
+<h4>Crawley</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-144.png" width="672" /></p>
+</div>
+<div id="south-cambridgeshire" class="section level4">
+<h4>South Cambridgeshire</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-145.png" width="672" /></p>
+</div>
+<div id="horsham" class="section level4">
+<h4>Horsham</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-146.png" width="672" /></p>
+</div>
+<div id="west-devon" class="section level4">
+<h4>West Devon</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-147.png" width="672" /></p>
+</div>
+<div id="gravesham" class="section level4">
+<h4>Gravesham</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-148.png" width="672" /></p>
+</div>
+<div id="huntingdonshire" class="section level4">
+<h4>Huntingdonshire</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-149.png" width="672" /></p>
+</div>
+<div id="west-berkshire" class="section level4">
+<h4>West Berkshire</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-150.png" width="672" /></p>
+</div>
+<div id="mid-devon" class="section level4">
+<h4>Mid Devon</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-151.png" width="672" /></p>
+</div>
+<div id="herefordshire-county-of" class="section level4">
+<h4>Herefordshire, County of</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-152.png" width="672" /></p>
+</div>
+<div id="forest-of-dean" class="section level4">
+<h4>Forest of Dean</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-153.png" width="672" /></p>
+</div>
+<div id="sedgemoor" class="section level4">
+<h4>Sedgemoor</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-154.png" width="672" /></p>
+</div>
+<div id="dover" class="section level4">
+<h4>Dover</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-155.png" width="672" /></p>
+</div>
+<div id="eastbourne" class="section level4">
+<h4>Eastbourne</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-156.png" width="672" /></p>
+</div>
+<div id="stroud" class="section level4">
+<h4>Stroud</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-157.png" width="672" /></p>
+</div>
+<div id="teignbridge" class="section level4">
+<h4>Teignbridge</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-158.png" width="672" /></p>
+</div>
+<div id="broadland" class="section level4">
+<h4>Broadland</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-159.png" width="672" /></p>
+</div>
+<div id="south-norfolk" class="section level4">
+<h4>South Norfolk</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-160.png" width="672" /></p>
+</div>
+<div id="thanet" class="section level4">
+<h4>Thanet</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-161.png" width="672" /></p>
+</div>
+<div id="lewes" class="section level4">
+<h4>Lewes</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-162.png" width="672" /></p>
+</div>
+<div id="east-hampshire" class="section level4">
+<h4>East Hampshire</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-163.png" width="672" /></p>
+</div>
+<div id="tewkesbury" class="section level4">
+<h4>Tewkesbury</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-164.png" width="672" /></p>
+</div>
+<div id="north-devon" class="section level4">
+<h4>North Devon</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-165.png" width="672" /></p>
+</div>
+<div id="fenland" class="section level4">
+<h4>Fenland</h4>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20with%20widespread%20infection%20rates-166.png" width="672" /></p>
+</div>
 </div>
 <div id="significant-and-increasing-infection" class="section level3">
 <h3>Significant and increasing infection</h3>
 <p>Finally, we’ll make a list of places where there’s been a significant infection (over 4 cases / day / 100,000 population) at some point over the last week <em>and</em> that are seeing increases in those rates.</p>
 <ul>
-<li>South Norfolk</li>
-<li>Eastbourne</li>
+<li>Ashford</li>
+<li>Folkestone and Hythe</li>
 </ul>
 <p>Again we’ll create charts for those places that do not currently have additional restrictions:</p>
-<div id="south-norfolk" class="section level4">
-<h4>South Norfolk</h4>
+<div id="ashford" class="section level4">
+<h4>Ashford</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-1.png" width="672" /></p>
 </div>
-<div id="eastbourne" class="section level4">
-<h4>Eastbourne</h4>
+<div id="folkestone-and-hythe" class="section level4">
+<h4>Folkestone and Hythe</h4>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20worrisome%20areas-2.png" width="672" /></p>
 </div>
 </div>
@@ -2367,87 +2473,137 @@ summary {
 <h2>Identifying areas that are the least worrying</h2>
 <p>Finally, for comparison, let’s have a look at the ten places with the lowest current average daily rates.</p>
 <ul>
+<li>Isle of Wight</li>
 <li>Torridge</li>
 <li>South Somerset</li>
-<li>Cornwall and Isles of Scilly</li>
-<li>Folkestone and Hythe</li>
 <li>Gosport</li>
-<li>Mid Devon</li>
-<li>Isle of Wight</li>
+<li>Worthing</li>
+<li>North Devon</li>
+<li>Tonbridge and Malling</li>
+<li>North Norfolk</li>
 <li>Rother</li>
-<li>Tewkesbury</li>
-<li>Arun</li>
+<li>Cornwall and Isles of Scilly</li>
 </ul>
+<div id="isle-of-wight" class="section level3">
+<h3>Isle of Wight</h3>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-1.png" width="672" /></p>
+</div>
 <div id="torridge" class="section level3">
 <h3>Torridge</h3>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-1.png" width="672" /></p>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-2.png" width="672" /></p>
 </div>
 <div id="south-somerset" class="section level3">
 <h3>South Somerset</h3>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-2.png" width="672" /></p>
-</div>
-<div id="cornwall-and-isles-of-scilly" class="section level3">
-<h3>Cornwall and Isles of Scilly</h3>
-<pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-3.png" width="672" /></p>
-</div>
-<div id="folkestone-and-hythe" class="section level3">
-<h3>Folkestone and Hythe</h3>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-4.png" width="672" /></p>
 </div>
 <div id="gosport" class="section level3">
 <h3>Gosport</h3>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-4.png" width="672" /></p>
+</div>
+<div id="worthing" class="section level3">
+<h3>Worthing</h3>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-5.png" width="672" /></p>
 </div>
-<div id="mid-devon" class="section level3">
-<h3>Mid Devon</h3>
+<div id="north-devon-1" class="section level3">
+<h3>North Devon</h3>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-6.png" width="672" /></p>
 </div>
-<div id="isle-of-wight" class="section level3">
-<h3>Isle of Wight</h3>
+<div id="tonbridge-and-malling" class="section level3">
+<h3>Tonbridge and Malling</h3>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-7.png" width="672" /></p>
+</div>
+<div id="north-norfolk" class="section level3">
+<h3>North Norfolk</h3>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-8.png" width="672" /></p>
 </div>
 <div id="rother" class="section level3">
 <h3>Rother</h3>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
-<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-8.png" width="672" /></p>
-</div>
-<div id="tewkesbury" class="section level3">
-<h3>Tewkesbury</h3>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-9.png" width="672" /></p>
 </div>
-<div id="arun" class="section level3">
-<h3>Arun</h3>
+<div id="cornwall-and-isles-of-scilly" class="section level3">
+<h3>Cornwall and Isles of Scilly</h3>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_text).</code></pre>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20low%20rate%20areas-10.png" width="672" /></p>
 </div>
 </div>
 <div id="areas-of-interest" class="section level2">
 <h2>Areas of interest</h2>
-<p>Just to highlight areas that are <a href="https://www.theguardian.com/world/2020/sep/17/leeds-poised-join-list-areas-under-local-coronavirus-lockdowns">in the news</a>:</p>
+<p>Just to highlight areas that were <a href="https://www.gov.uk/government/news/local-covid-alert-level-update-for-greater-manchester">recently moved to Tier 3</a>:</p>
 <ul>
-<li>Liverpool</li>
-<li>Hartlepool</li>
-<li>Middlesbrough</li>
-<li>Warrington</li>
+<li>Bolton</li>
+<li>Bury</li>
+<li>Manchester</li>
+<li>Oldham</li>
+<li>Rochdale</li>
+<li>Salford</li>
+<li>Stockport</li>
+<li>Tameside</li>
+<li>Trafford</li>
+<li>Wigan</li>
+<li>Barnsley</li>
+<li>Doncaster</li>
+<li>Rotherham</li>
+<li>Sheffield</li>
 </ul>
-<div id="liverpool-2" class="section level3">
-<h3>Liverpool</h3>
+<div id="bolton-2" class="section level3">
+<h3>Bolton</h3>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20in%20the%20news-1.png" width="672" /></p>
 </div>
-<div id="hartlepool-1" class="section level3">
-<h3>Hartlepool</h3>
+<div id="bury-2" class="section level3">
+<h3>Bury</h3>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20in%20the%20news-2.png" width="672" /></p>
 </div>
-<div id="middlesbrough-1" class="section level3">
-<h3>Middlesbrough</h3>
+<div id="manchester-2" class="section level3">
+<h3>Manchester</h3>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20in%20the%20news-3.png" width="672" /></p>
 </div>
-<div id="warrington-1" class="section level3">
-<h3>Warrington</h3>
+<div id="oldham-2" class="section level3">
+<h3>Oldham</h3>
 <p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20in%20the%20news-4.png" width="672" /></p>
+</div>
+<div id="rochdale-2" class="section level3">
+<h3>Rochdale</h3>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20in%20the%20news-5.png" width="672" /></p>
+</div>
+<div id="salford-2" class="section level3">
+<h3>Salford</h3>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20in%20the%20news-6.png" width="672" /></p>
+</div>
+<div id="stockport-2" class="section level3">
+<h3>Stockport</h3>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20in%20the%20news-7.png" width="672" /></p>
+</div>
+<div id="tameside-2" class="section level3">
+<h3>Tameside</h3>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20in%20the%20news-8.png" width="672" /></p>
+</div>
+<div id="trafford-2" class="section level3">
+<h3>Trafford</h3>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20in%20the%20news-9.png" width="672" /></p>
+</div>
+<div id="wigan-2" class="section level3">
+<h3>Wigan</h3>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20in%20the%20news-10.png" width="672" /></p>
+</div>
+<div id="barnsley-2" class="section level3">
+<h3>Barnsley</h3>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20in%20the%20news-11.png" width="672" /></p>
+</div>
+<div id="doncaster-2" class="section level3">
+<h3>Doncaster</h3>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20in%20the%20news-12.png" width="672" /></p>
+</div>
+<div id="rotherham-2" class="section level3">
+<h3>Rotherham</h3>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20in%20the%20news-13.png" width="672" /></p>
+</div>
+<div id="sheffield-2" class="section level3">
+<h3>Sheffield</h3>
+<p><img src="covid-19-uk-cases_files/figure-html/graph%20data%20for%20areas%20in%20the%20news-14.png" width="672" /></p>
 </div>
 <div id="london" class="section level3">
 <h3>London</h3>

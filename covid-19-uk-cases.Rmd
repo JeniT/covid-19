@@ -764,10 +764,10 @@ for (area in okAreas) {
 
 ## Areas of interest
 
-Just to highlight areas that are [in the news](https://www.theguardian.com/world/2020/sep/17/leeds-poised-join-list-areas-under-local-coronavirus-lockdowns):
+Just to highlight areas that were [recently moved to Tier 3](https://www.gov.uk/government/news/local-covid-alert-level-update-for-greater-manchester):
 
 ```{r areas in the news, results='asis'}
-newsAreas = c("Liverpool", "Hartlepool", "Middlesbrough", "Warrington")
+newsAreas = c("Bolton", "Bury", "Manchester", "Oldham", "Rochdale", "Salford", "Stockport", "Tameside", "Trafford", "Wigan", "Barnsley", "Doncaster", "Rotherham",  "Sheffield")
 
 # print a list of these areas
 cat(paste("*", newsAreas), sep="\n")
