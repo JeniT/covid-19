@@ -572,16 +572,21 @@ case_rate_graph = function(area) {
     annotate(geom = "rect", xmin = xrng[1], xmax = xrng[2], ymin = min(7, yrng[2]), ymax = yrng[2], fill = colour.widespread, alpha = 0.5) +
     annotate(geom = "text", x = xrng[1] + 5, y = 7 + (yrng[2] - 7) / 2, hjust = 0, color = colour.widespread, label = "WIDESPREAD") +
     annotate(geom = "rect", xmin = as.Date("2020-03-23"), xmax = as.Date("2020-07-04"), ymin = 0, ymax = yrng[2], fill = "white", alpha = 0.3) +
-    annotate(geom = "text", x = as.Date("2020-05-15"), y = yrng[2] * 0.95, color = "white", label = "LOCKDOWN") +
-    annotate(geom = "segment", x = as.Date("2020-07-04"), y = yrng[1], xend = as.Date("2020-07-04"), yend = yrng[2], color = "white", linetype = "dashed") +
-    annotate(geom = "text", x = as.Date("2020-07-07"), y = yrng[2] * 0.95, hjust = 1, angle = 90, color = "white", label = "national lockdown ends") +
-    geom_rect(
-      aes(xmin = StartDate, xmax = EndDate),
-          ymin = 0, ymax = yrng[2], fill = "white", alpha = 0.3,
-          data = areaRestrictions) +
+    annotate(geom = "text", x = as.Date("2020-05-15"), y = yrng[2] * 0.95, color = "white", vjust = "top", label = "NATIONAL\nLOCKDOWN") +
+    geom_rect(data = areaRestrictions,
+              mapping = aes(xmin = StartDate, xmax = EndDate),
+              ymin = 0, ymax = yrng[2], fill = "white", alpha = 0.3) +
     geom_col(data = areaCases,
              mapping = aes(x = Date, y = AverageDailyRate, group = 1),
              fill = "#333333", width = 1) +
+    annotate(geom = "segment", x = as.Date("2020-07-04"), y = yrng[1], xend = as.Date("2020-07-04"), yend = yrng[2], color = "white", linetype = "dashed") +
+    annotate(geom = "text", x = as.Date("2020-07-07"), y = yrng[2] * 0.95, hjust = "right", angle = 90, color = "white", label = "national lockdown ends") +
+    geom_vline(data = filter(areaRestrictions, !is.na(Tier)),
+               mapping = aes(xintercept = StartDate),
+               color = "white", linetype = "dashed") +
+    geom_text(data = filter(areaRestrictions, !is.na(Tier)),
+              mapping = aes(x = StartDate - 3, label = if_else(is.na(Tier), "", paste("Tier", Tier))),
+              y = yrng[2] * 0.95, hjust = "right", angle = 90, color = "white") +
     annotate(geom = "text", color = colour.odi_orange, label = "  underestimates", angle = 90, hjust = 0, x = mostRecentDate - 3, y = 0) +
     scale_x_date(expand = c(0,0), date_breaks = "1 month", date_labels = "%b") +
     scale_y_continuous(limits = c(0,yrng[2]), expand = c(0,0)) +
