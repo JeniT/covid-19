@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Covid-19 England Awards</title>
+
+<script src="covid-19-england-awards_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="covid-19-england-awards_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="covid-19-england-awards_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="covid-19-england-awards_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="covid-19-england-awards_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="covid-19-england-awards_files/navigation-1.1/tabsets.js"></script>
+<link href="covid-19-england-awards_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="covid-19-england-awards_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Covid-19 England Awards</h1>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#national-awards">National awards</a><ul>
+<li><a href="#lowest-daily-rate">Lowest daily rate</a></li>
+<li><a href="#most-improved-in-last-week">Most improved in last week</a></li>
+<li><a href="#most-improved-since-2nd-wave-peak">Most improved since 2nd wave peak</a></li>
+</ul></li>
+<li><a href="#awards-within-different-deprivation-levels">Awards within different deprivation levels</a><ul>
+<li><a href="#highest-quintile-of-deprivation">Highest quintile of deprivation</a></li>
+<li><a href="#second-highest-quintile-of-deprivation">Second highest quintile of deprivation</a></li>
+<li><a href="#middle-quintile-of-deprivation">Middle quintile of deprivation</a></li>
+<li><a href="#second-lowest-quintile-of-deprivation">Second lowest quintile of deprivation</a></li>
+<li><a href="#lowest-quintile-of-deprivation-least-deprived">Lowest quintile of deprivation (least deprived)</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p>Things are looking pretty grim in terms of Covid-19 in England. But there are some areas that are doing well. This page seeks to highlight local authorities that are navigating better than others through the Covid-19 second wave. Perhaps there are things we can learn from them.</p>
+<p>See the <a href="https://github.com/JeniT/covid-19">source code is available on Github</a> if you want to look at this and other analyses, including analyses of the <a href="https://jenit.github.io/covid-19/covid-19-uk-cases.html">Covid-19 case data in England in areas that aren’t doing so well</a>. The data on this page is from <a href="https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv" class="uri">https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv</a> and reports “lab-confirmed positive COVID-19 PCR test on or up to the specimen date”. The specimen date is the date that someone had the test taken. The government site has <a href="https://coronavirus.data.gov.uk/about-data#daily-and-cumulative-numbers-of-cases">more details about the meaning of case numbers</a>.</p>
+<p>These awards are based on data updated on November 13 but the awards will be based on data since November 08 because it can take a number of days to process the test and to report the result.</p>
+<p>The figures we’re going to give awards for are based on a rolling seven day average of figures from the previous week.</p>
+<p>When we compare local authorities, we need to bear in mind that different local authorities have different sizes. A small absolute number of cases in a large local authority is a greater achievement than that number of cases in a smaller local authority, because it means a smaller percentage of the population are affected.</p>
+<p>So we need to calculate infection rates. To do that, we’re using <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatesforukenglandandwalesscotlandandnorthernireland">population data from the ONS</a> and calculating rates per 100,000 people.</p>
+<div id="national-awards" class="section level2">
+<h2>National awards</h2>
+<p>The following are the awards across the whole of England.</p>
+<div id="lowest-daily-rate" class="section level3">
+<h3>Lowest daily rate</h3>
+<p>This set of awards is going to the areas that had the lowest average daily rates of cases per 100,000 population on November 08. These are:</p>
+<div id="st-hastings" class="section level4">
+<h4>1st : Hastings</h4>
+<p><img src="covid-19-england-awards_files/figure-html/graphs%20for%20lowest%20rates-1.png" width="672" /></p>
+</div>
+<div id="nd-north-norfolk" class="section level4">
+<h4>2nd : North Norfolk</h4>
+<p><img src="covid-19-england-awards_files/figure-html/graphs%20for%20lowest%20rates-2.png" width="672" /></p>
+</div>
+<div id="rd-west-suffolk" class="section level4">
+<h4>3rd : West Suffolk</h4>
+<p><img src="covid-19-england-awards_files/figure-html/graphs%20for%20lowest%20rates-3.png" width="672" /></p>
+</div>
+<div id="top-10" class="section level4">
+<h4>Top 10</h4>
+<ol style="list-style-type: decimal">
+<li>Hastings</li>
+<li>North Norfolk</li>
+<li>West Suffolk</li>
+<li>Tendring</li>
+<li>Teignbridge</li>
+<li>East Suffolk</li>
+<li>Wealden</li>
+<li>Cornwall and Isles of Scilly</li>
+<li>Adur</li>
+<li>Worthing</li>
+</ol>
+</div>
+</div>
+<div id="most-improved-in-last-week" class="section level3">
+<h3>Most improved in last week</h3>
+<p>Arguably a better way of awarding local authority areas is by how much they are improving. This set of awards go to those places that have improved the most over in the week up to November 08. These are:</p>
+<div id="st-rushcliffe" class="section level4">
+<h4>1st : Rushcliffe</h4>
+<p><img src="covid-19-england-awards_files/figure-html/graphs%20for%20most%20improved%20in%20last%20week-1.png" width="672" /></p>
+</div>
+<div id="nd-lancaster" class="section level4">
+<h4>2nd : Lancaster</h4>
+<p><img src="covid-19-england-awards_files/figure-html/graphs%20for%20most%20improved%20in%20last%20week-2.png" width="672" /></p>
+</div>
+<div id="rd-barrow-in-furness" class="section level4">
+<h4>3rd : Barrow-in-Furness</h4>
+<p><img src="covid-19-england-awards_files/figure-html/graphs%20for%20most%20improved%20in%20last%20week-3.png" width="672" /></p>
+</div>
+<div id="top-10-1" class="section level4">
+<h4>Top 10</h4>
+<ol style="list-style-type: decimal">
+<li>Rushcliffe</li>
+<li>Lancaster</li>
+<li>Barrow-in-Furness</li>
+<li>Eastbourne</li>
+<li>South Ribble</li>
+<li>Hertsmere</li>
+<li>West Suffolk</li>
+<li>Stockport</li>
+<li>West Lancashire</li>
+<li>Rotherham</li>
+</ol>
+</div>
+</div>
+<div id="most-improved-since-2nd-wave-peak" class="section level3">
+<h3>Most improved since 2nd wave peak</h3>
+<p>Our final set of awards go to those places that have improved the most since their 2nd wave peak. These are:</p>
+<div id="st-exeter" class="section level4">
+<h4>1st : Exeter</h4>
+<p><img src="covid-19-england-awards_files/figure-html/graphs%20for%20most%20improved%20in%20second%20wave-1.png" width="672" /></p>
+</div>
+<div id="nd-nottingham" class="section level4">
+<h4>2nd : Nottingham</h4>
+<p><img src="covid-19-england-awards_files/figure-html/graphs%20for%20most%20improved%20in%20second%20wave-2.png" width="672" /></p>
+</div>
+<div id="rd-lancaster" class="section level4">
+<h4>3rd : Lancaster</h4>
+<p><img src="covid-19-england-awards_files/figure-html/graphs%20for%20most%20improved%20in%20second%20wave-3.png" width="672" /></p>
+</div>
+<div id="top-10-2" class="section level4">
+<h4>Top 10</h4>
+<ol style="list-style-type: decimal">
+<li>Exeter</li>
+<li>Nottingham</li>
+<li>Lancaster</li>
+<li>Liverpool</li>
+<li>Knowsley</li>
+<li>Breckland</li>
+<li>Rushcliffe</li>
+<li>Tendring</li>
+<li>Barrow-in-Furness</li>
+<li>York</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="awards-within-different-deprivation-levels" class="section level2">
+<h2>Awards within different deprivation levels</h2>
+<p>I’m also splitting local authorities into five different categories based on the <a href="https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019">Indices of Deprivation</a> from 2019, which provide a measure of how deprived areas are, and giving awards within these categories.</p>
+<div id="highest-quintile-of-deprivation" class="section level3">
+<h3>Highest quintile of deprivation</h3>
+<p>Barking and Dagenham | Barnsley | Barrow-in-Furness | Birmingham | Blackburn with Darwen | Blackpool | Bolton | Bradford | Burnley | County Durham | Doncaster | East Lindsey | Gateshead | Great Yarmouth | Hackney and City of London | Halton | Haringey | Hartlepool | Hastings | Hyndburn | Islington | Kingston upon Hull, City of | Knowsley | Leeds | Leicester | Lewisham | Lincoln | Liverpool | Manchester | Mansfield | Middlesbrough | Newcastle upon Tyne | Newham | North East Lincolnshire | Norwich | Nottingham | Oldham | Pendle | Peterborough | Portsmouth | Preston | Redcar and Cleveland | Rochdale | Rotherham | Salford | Sandwell | Sefton | Sheffield | South Tyneside | Southampton | St. Helens | Stoke-on-Trent | Sunderland | Swale | Tameside | Tendring | Thanet | Torbay | Tower Hamlets | Wakefield | Walsall | Wirral | Wolverhampton</p>
+<div id="lowest-daily-rate-1" class="section level4">
+<h4>Lowest daily rate</h4>
+<p>This set of awards is going to go to the areas that had the lowest average daily rates of cases per 100,000 population on November 08. These are:</p>
+<div id="st-hastings-1" class="section level5">
+<h5>1st : Hastings</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%201%20graphs%20for%20lowest%20rates-1.png" width="672" /></p>
+</div>
+<div id="nd-tendring" class="section level5">
+<h5>2nd : Tendring</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%201%20graphs%20for%20lowest%20rates-2.png" width="672" /></p>
+</div>
+<div id="rd-norwich" class="section level5">
+<h5>3rd : Norwich</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%201%20graphs%20for%20lowest%20rates-3.png" width="672" /></p>
+</div>
+<div id="top-10-3" class="section level5">
+<h5>Top 10</h5>
+<ol style="list-style-type: decimal">
+<li>Hastings</li>
+<li>Tendring</li>
+<li>Norwich</li>
+<li>Lewisham</li>
+<li>Haringey</li>
+<li>Hackney and City of London</li>
+<li>Islington</li>
+<li>Barrow-in-Furness</li>
+<li>Peterborough</li>
+<li>Southampton</li>
+</ol>
+</div>
+</div>
+<div id="most-improved-in-last-week-1" class="section level4">
+<h4>Most improved in last week</h4>
+<p>Arguably a better way of awarding local authority areas is by how much they are improving. This set of awards go to those places that have improved the most over in the week up to November 08. These are:</p>
+<div id="st-barrow-in-furness" class="section level5">
+<h5>1st : Barrow-in-Furness</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%201%20graphs%20for%20most%20improved%20in%20last%20week-1.png" width="672" /></p>
+</div>
+<div id="nd-rotherham" class="section level5">
+<h5>2nd : Rotherham</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%201%20graphs%20for%20most%20improved%20in%20last%20week-2.png" width="672" /></p>
+</div>
+<div id="rd-st.-helens" class="section level5">
+<h5>3rd : St. Helens</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%201%20graphs%20for%20most%20improved%20in%20last%20week-3.png" width="672" /></p>
+</div>
+<div id="top-10-4" class="section level5">
+<h5>Top 10</h5>
+<ol style="list-style-type: decimal">
+<li>Barrow-in-Furness</li>
+<li>Rotherham</li>
+<li>St. Helens</li>
+<li>Doncaster</li>
+<li>Barnsley</li>
+<li>Sheffield</li>
+<li>Salford</li>
+<li>Tameside</li>
+<li>Liverpool</li>
+<li>Hackney and City of London</li>
+</ol>
+</div>
+</div>
+<div id="most-improved-since-2nd-wave-peak-1" class="section level4">
+<h4>Most improved since 2nd wave peak</h4>
+<p>Our final set of awards go to those places that have improved the most since their 2nd wave peak. These are:</p>
+<div id="st-nottingham" class="section level5">
+<h5>1st : Nottingham</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%201%20graphs%20for%20most%20improved%20in%20second%20wave-1.png" width="672" /></p>
+</div>
+<div id="nd-liverpool" class="section level5">
+<h5>2nd : Liverpool</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%201%20graphs%20for%20most%20improved%20in%20second%20wave-2.png" width="672" /></p>
+</div>
+<div id="rd-knowsley" class="section level5">
+<h5>3rd : Knowsley</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%201%20graphs%20for%20most%20improved%20in%20second%20wave-3.png" width="672" /></p>
+</div>
+<div id="top-10-5" class="section level5">
+<h5>Top 10</h5>
+<ol style="list-style-type: decimal">
+<li>Nottingham</li>
+<li>Liverpool</li>
+<li>Knowsley</li>
+<li>Tendring</li>
+<li>Barrow-in-Furness</li>
+<li>Sefton</li>
+<li>Halton</li>
+<li>Blackpool</li>
+<li>Wirral</li>
+<li>Burnley</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="second-highest-quintile-of-deprivation" class="section level3">
+<h3>Second highest quintile of deprivation</h3>
+<p>Allerdale | Ashfield | Basildon | Bassetlaw | Bolsover | Boston | Brent | Bristol, City of | Bury | Calderdale | Carlisle | Chesterfield | Copeland | Corby | Cornwall and Isles of Scilly | Coventry | Croydon | Darlington | Derby | Dover | Dudley | Ealing | Eastbourne | Enfield | Fenland | Folkestone and Hythe | Gloucester | Gravesham | Greenwich | Hammersmith and Fulham | Harlow | Havant | Hounslow | Ipswich | Isle of Wight | Kensington and Chelsea | King’s Lynn and West Norfolk | Kirklees | Lambeth | Lancaster | Luton | Medway | North Lincolnshire | North Norfolk | North Tyneside | Northampton | Northumberland | Nuneaton and Bedworth | Plymouth | Redditch | Rossendale | Scarborough | Sedgemoor | Slough | Southend-on-Sea | Southwark | Stockton-on-Tees | Tamworth | Telford and Wrekin | Torridge | Waltham Forest | Wellingborough | Wigan | Wyre Forest</p>
+<div id="lowest-daily-rate-2" class="section level4">
+<h4>Lowest daily rate</h4>
+<p>This set of awards is going to go to the areas that had the lowest average daily rates of cases per 100,000 population on November 08. These are:</p>
+<div id="st-north-norfolk" class="section level5">
+<h5>1st : North Norfolk</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%202%20graphs%20for%20lowest%20rates-1.png" width="672" /></p>
+</div>
+<div id="nd-cornwall-and-isles-of-scilly" class="section level5">
+<h5>2nd : Cornwall and Isles of Scilly</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%202%20graphs%20for%20lowest%20rates-2.png" width="672" /></p>
+</div>
+<div id="rd-fenland" class="section level5">
+<h5>3rd : Fenland</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%202%20graphs%20for%20lowest%20rates-3.png" width="672" /></p>
+</div>
+<div id="top-10-6" class="section level5">
+<h5>Top 10</h5>
+<ol style="list-style-type: decimal">
+<li>North Norfolk</li>
+<li>Cornwall and Isles of Scilly</li>
+<li>Fenland</li>
+<li>Torridge</li>
+<li>Isle of Wight</li>
+<li>Eastbourne</li>
+<li>Ipswich</li>
+<li>Folkestone and Hythe</li>
+<li>Southwark</li>
+<li>Kensington and Chelsea</li>
+</ol>
+</div>
+</div>
+<div id="most-improved-in-last-week-2" class="section level4">
+<h4>Most improved in last week</h4>
+<p>Arguably a better way of awarding local authority areas is by how much they are improving. This set of awards go to those places that have improved the most over in the week up to November 08. These are:</p>
+<div id="st-lancaster" class="section level5">
+<h5>1st : Lancaster</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%202%20graphs%20for%20most%20improved%20in%20last%20week-1.png" width="672" /></p>
+</div>
+<div id="nd-eastbourne" class="section level5">
+<h5>2nd : Eastbourne</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%202%20graphs%20for%20most%20improved%20in%20last%20week-2.png" width="672" /></p>
+</div>
+<div id="rd-wigan" class="section level5">
+<h5>3rd : Wigan</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%202%20graphs%20for%20most%20improved%20in%20last%20week-3.png" width="672" /></p>
+</div>
+<div id="top-10-7" class="section level5">
+<h5>Top 10</h5>
+<ol style="list-style-type: decimal">
+<li>Lancaster</li>
+<li>Eastbourne</li>
+<li>Wigan</li>
+<li>Fenland</li>
+<li>Lambeth</li>
+<li>Hammersmith and Fulham</li>
+<li>Kensington and Chelsea</li>
+<li>Chesterfield</li>
+<li>Ashfield</li>
+<li>Southwark</li>
+</ol>
+</div>
+</div>
+<div id="most-improved-since-2nd-wave-peak-2" class="section level4">
+<h4>Most improved since 2nd wave peak</h4>
+<p>Our final set of awards go to those places that have improved the most since their 2nd wave peak. These are:</p>
+<div id="st-lancaster-1" class="section level5">
+<h5>1st : Lancaster</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%202%20graphs%20for%20most%20improved%20in%20second%20wave-1.png" width="672" /></p>
+</div>
+<div id="nd-rossendale" class="section level5">
+<h5>2nd : Rossendale</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%202%20graphs%20for%20most%20improved%20in%20second%20wave-2.png" width="672" /></p>
+</div>
+<div id="rd-kensington-and-chelsea" class="section level5">
+<h5>3rd : Kensington and Chelsea</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%202%20graphs%20for%20most%20improved%20in%20second%20wave-3.png" width="672" /></p>
+</div>
+<div id="top-10-8" class="section level5">
+<h5>Top 10</h5>
+<ol style="list-style-type: decimal">
+<li>Lancaster</li>
+<li>Rossendale</li>
+<li>Kensington and Chelsea</li>
+<li>Eastbourne</li>
+<li>Hammersmith and Fulham</li>
+<li>Southwark</li>
+<li>Fenland</li>
+<li>Wigan</li>
+<li>Basildon</li>
+<li>Stockton-on-Tees</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="middle-quintile-of-deprivation" class="section level3">
+<h3>Middle quintile of deprivation</h3>
+<p>Adur | Amber Valley | Arun | Ashford | Barnet | Bedford | Bexley | Bournemouth, Christchurch and Poole | Breckland | Brighton and Hove | Broxbourne | Camden | Cannock Chase | Canterbury | Castle Point | Cheshire West and Chester | Chorley | Colchester | Crawley | Dartford | East Staffordshire | East Suffolk | Eden | Erewash | Exeter | Forest of Dean | Gosport | Havering | Herefordshire, County of | Hillingdon | Kettering | Maidstone | Mendip | Mid Devon | Milton Keynes | Newark and Sherwood | Newcastle-under-Lyme | North Devon | North East Derbyshire | North Warwickshire | Oxford | Reading | Redbridge | Rother | Shropshire | Solihull | Somerset West and Taunton | South Holland | South Somerset | Stevenage | Stockport | Swindon | Thurrock | Wandsworth | Warrington | West Devon | West Lancashire | West Lindsey | West Suffolk | Westminster | Worcester | Worthing | Wyre</p>
+<div id="lowest-daily-rate-3" class="section level4">
+<h4>Lowest daily rate</h4>
+<p>This set of awards is going to go to the areas that had the lowest average daily rates of cases per 100,000 population on November 08. These are:</p>
+<div id="st-west-suffolk" class="section level5">
+<h5>1st : West Suffolk</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%203%20graphs%20for%20lowest%20rates-1.png" width="672" /></p>
+</div>
+<div id="nd-east-suffolk" class="section level5">
+<h5>2nd : East Suffolk</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%203%20graphs%20for%20lowest%20rates-2.png" width="672" /></p>
+</div>
+<div id="rd-adur" class="section level5">
+<h5>3rd : Adur</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%203%20graphs%20for%20lowest%20rates-3.png" width="672" /></p>
+</div>
+<div id="top-10-9" class="section level5">
+<h5>Top 10</h5>
+<ol style="list-style-type: decimal">
+<li>West Suffolk</li>
+<li>East Suffolk</li>
+<li>Adur</li>
+<li>Worthing</li>
+<li>Mid Devon</li>
+<li>Rother</li>
+<li>Arun</li>
+<li>Mendip</li>
+<li>Somerset West and Taunton</li>
+<li>Breckland</li>
+</ol>
+</div>
+</div>
+<div id="most-improved-in-last-week-3" class="section level4">
+<h4>Most improved in last week</h4>
+<p>Arguably a better way of awarding local authority areas is by how much they are improving. This set of awards go to those places that have improved the most over in the week up to November 08. These are:</p>
+<div id="st-west-suffolk-1" class="section level5">
+<h5>1st : West Suffolk</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%203%20graphs%20for%20most%20improved%20in%20last%20week-1.png" width="672" /></p>
+</div>
+<div id="nd-stockport" class="section level5">
+<h5>2nd : Stockport</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%203%20graphs%20for%20most%20improved%20in%20last%20week-2.png" width="672" /></p>
+</div>
+<div id="rd-west-lancashire" class="section level5">
+<h5>3rd : West Lancashire</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%203%20graphs%20for%20most%20improved%20in%20last%20week-3.png" width="672" /></p>
+</div>
+<div id="top-10-10" class="section level5">
+<h5>Top 10</h5>
+<ol style="list-style-type: decimal">
+<li>West Suffolk</li>
+<li>Stockport</li>
+<li>West Lancashire</li>
+<li>Warrington</li>
+<li>Erewash</li>
+<li>Breckland</li>
+<li>Worthing</li>
+<li>Wyre</li>
+<li>Westminster</li>
+<li>North East Derbyshire</li>
+</ol>
+</div>
+</div>
+<div id="most-improved-since-2nd-wave-peak-3" class="section level4">
+<h4>Most improved since 2nd wave peak</h4>
+<p>Our final set of awards go to those places that have improved the most since their 2nd wave peak. These are:</p>
+<div id="st-exeter-1" class="section level5">
+<h5>1st : Exeter</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%203%20graphs%20for%20most%20improved%20in%20second%20wave-1.png" width="672" /></p>
+</div>
+<div id="nd-breckland" class="section level5">
+<h5>2nd : Breckland</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%203%20graphs%20for%20most%20improved%20in%20second%20wave-2.png" width="672" /></p>
+</div>
+<div id="rd-west-suffolk-1" class="section level5">
+<h5>3rd : West Suffolk</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%203%20graphs%20for%20most%20improved%20in%20second%20wave-3.png" width="672" /></p>
+</div>
+<div id="top-10-11" class="section level5">
+<h5>Top 10</h5>
+<ol style="list-style-type: decimal">
+<li>Exeter</li>
+<li>Breckland</li>
+<li>West Suffolk</li>
+<li>West Lancashire</li>
+<li>Chorley</li>
+<li>Wyre</li>
+<li>Colchester</li>
+<li>Worthing</li>
+<li>North East Derbyshire</li>
+<li>Stockport</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="second-lowest-quintile-of-deprivation" class="section level3">
+<h3>Second lowest quintile of deprivation</h3>
+<p>Babergh | Basingstoke and Deane | Braintree | Bromley | Broxtowe | Cambridge | Central Bedfordshire | Charnwood | Chelmsford | Cheltenham | Cherwell | Cheshire East | Chichester | Craven | Dacorum | Daventry | Dorset | East Devon | East Northamptonshire | East Riding of Yorkshire | Epping Forest | Fylde | Gedling | Harrow | Hertsmere | High Peak | Hinckley and Bosworth | Huntingdonshire | Lewes | Lichfield | Maldon | Malvern Hills | Melton | Merton | Mid Suffolk | New Forest | North Somerset | North West Leicestershire | Oadby and Wigston | Rugby | Rushmoor | Ryedale | Selby | Sevenoaks | South Derbyshire | South Hams | South Kesteven | South Lakeland | South Norfolk | South Ribble | South Staffordshire | Spelthorne | Stafford | Staffordshire Moorlands | Sutton | Teignbridge | Tonbridge and Malling | Trafford | Watford | Wealden | Welwyn Hatfield | Wiltshire | Wychavon</p>
+<div id="lowest-daily-rate-4" class="section level4">
+<h4>Lowest daily rate</h4>
+<p>This set of awards is going to go to the areas that had the lowest average daily rates of cases per 100,000 population on November 08. These are:</p>
+<div id="st-teignbridge" class="section level5">
+<h5>1st : Teignbridge</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%204%20graphs%20for%20lowest%20rates-1.png" width="672" /></p>
+</div>
+<div id="nd-wealden" class="section level5">
+<h5>2nd : Wealden</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%204%20graphs%20for%20lowest%20rates-2.png" width="672" /></p>
+</div>
+<div id="rd-maldon" class="section level5">
+<h5>3rd : Maldon</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%204%20graphs%20for%20lowest%20rates-3.png" width="672" /></p>
+</div>
+<div id="top-10-12" class="section level5">
+<h5>Top 10</h5>
+<ol style="list-style-type: decimal">
+<li>Teignbridge</li>
+<li>Wealden</li>
+<li>Maldon</li>
+<li>Mid Suffolk</li>
+<li>Lewes</li>
+<li>South Hams</li>
+<li>Chelmsford</li>
+<li>Wiltshire</li>
+<li>Braintree</li>
+<li>Huntingdonshire</li>
+</ol>
+</div>
+</div>
+<div id="most-improved-in-last-week-4" class="section level4">
+<h4>Most improved in last week</h4>
+<p>Arguably a better way of awarding local authority areas is by how much they are improving. This set of awards go to those places that have improved the most over in the week up to November 08. These are:</p>
+<div id="st-south-ribble" class="section level5">
+<h5>1st : South Ribble</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%204%20graphs%20for%20most%20improved%20in%20last%20week-1.png" width="672" /></p>
+</div>
+<div id="nd-hertsmere" class="section level5">
+<h5>2nd : Hertsmere</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%204%20graphs%20for%20most%20improved%20in%20last%20week-2.png" width="672" /></p>
+</div>
+<div id="rd-fylde" class="section level5">
+<h5>3rd : Fylde</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%204%20graphs%20for%20most%20improved%20in%20last%20week-3.png" width="672" /></p>
+</div>
+<div id="top-10-13" class="section level5">
+<h5>Top 10</h5>
+<ol style="list-style-type: decimal">
+<li>South Ribble</li>
+<li>Hertsmere</li>
+<li>Fylde</li>
+<li>Teignbridge</li>
+<li>Watford</li>
+<li>Broxtowe</li>
+<li>Gedling</li>
+<li>South Lakeland</li>
+<li>Craven</li>
+<li>Merton</li>
+</ol>
+</div>
+</div>
+<div id="most-improved-since-2nd-wave-peak-4" class="section level4">
+<h4>Most improved since 2nd wave peak</h4>
+<p>Our final set of awards go to those places that have improved the most since their 2nd wave peak. These are:</p>
+<div id="st-south-ribble-1" class="section level5">
+<h5>1st : South Ribble</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%204%20graphs%20for%20most%20improved%20in%20second%20wave-1.png" width="672" /></p>
+</div>
+<div id="nd-hertsmere-1" class="section level5">
+<h5>2nd : Hertsmere</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%204%20graphs%20for%20most%20improved%20in%20second%20wave-2.png" width="672" /></p>
+</div>
+<div id="rd-fylde-1" class="section level5">
+<h5>3rd : Fylde</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%204%20graphs%20for%20most%20improved%20in%20second%20wave-3.png" width="672" /></p>
+</div>
+<div id="top-10-14" class="section level5">
+<h5>Top 10</h5>
+<ol style="list-style-type: decimal">
+<li>South Ribble</li>
+<li>Hertsmere</li>
+<li>Fylde</li>
+<li>Gedling</li>
+<li>Broxtowe</li>
+<li>Charnwood</li>
+<li>Teignbridge</li>
+<li>Lewes</li>
+<li>Watford</li>
+<li>Cambridge</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="lowest-quintile-of-deprivation-least-deprived" class="section level3">
+<h3>Lowest quintile of deprivation (least deprived)</h3>
+<p>Aylesbury Vale | Bath and North East Somerset | Blaby | Bracknell Forest | Brentwood | Broadland | Bromsgrove | Chiltern | Cotswold | Derbyshire Dales | East Cambridgeshire | East Hampshire | East Hertfordshire | Eastleigh | Elmbridge | Epsom and Ewell | Fareham | Guildford | Hambleton | Harborough | Harrogate | Hart | Horsham | Kingston upon Thames | Mid Sussex | Mole Valley | North Hertfordshire | North Kesteven | Reigate and Banstead | Ribble Valley | Richmond upon Thames | Richmondshire | Rochford | Runnymede | Rushcliffe | Rutland | South Bucks | South Cambridgeshire | South Gloucestershire | South Northamptonshire | South Oxfordshire | St Albans | Stratford-on-Avon | Stroud | Surrey Heath | Tandridge | Test Valley | Tewkesbury | Three Rivers | Tunbridge Wells | Uttlesford | Vale of White Horse | Warwick | Waverley | West Berkshire | West Oxfordshire | Winchester | Windsor and Maidenhead | Woking | Wokingham | Wycombe | York</p>
+<div id="lowest-daily-rate-5" class="section level4">
+<h4>Lowest daily rate</h4>
+<p>This set of awards is going to go to the areas that had the lowest average daily rates of cases per 100,000 population on November 08. These are:</p>
+<div id="st-east-cambridgeshire" class="section level5">
+<h5>1st : East Cambridgeshire</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%205%20graphs%20for%20lowest%20rates-1.png" width="672" /></p>
+</div>
+<div id="nd-tunbridge-wells" class="section level5">
+<h5>2nd : Tunbridge Wells</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%205%20graphs%20for%20lowest%20rates-2.png" width="672" /></p>
+</div>
+<div id="rd-rochford" class="section level5">
+<h5>3rd : Rochford</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%205%20graphs%20for%20lowest%20rates-3.png" width="672" /></p>
+</div>
+<div id="top-10-15" class="section level5">
+<h5>Top 10</h5>
+<ol style="list-style-type: decimal">
+<li>East Cambridgeshire</li>
+<li>Tunbridge Wells</li>
+<li>Rochford</li>
+<li>Tewkesbury</li>
+<li>Test Valley</li>
+<li>South Cambridgeshire</li>
+<li>Horsham</li>
+<li>North Hertfordshire</li>
+<li>Elmbridge</li>
+<li>Mid Sussex</li>
+</ol>
+</div>
+</div>
+<div id="most-improved-in-last-week-5" class="section level4">
+<h4>Most improved in last week</h4>
+<p>Arguably a better way of awarding local authority areas is by how much they are improving. This set of awards go to those places that have improved the most over in the week up to November 08. These are:</p>
+<div id="st-rushcliffe-1" class="section level5">
+<h5>1st : Rushcliffe</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%205%20graphs%20for%20most%20improved%20in%20last%20week-1.png" width="672" /></p>
+</div>
+<div id="nd-waverley" class="section level5">
+<h5>2nd : Waverley</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%205%20graphs%20for%20most%20improved%20in%20last%20week-2.png" width="672" /></p>
+</div>
+<div id="rd-york" class="section level5">
+<h5>3rd : York</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%205%20graphs%20for%20most%20improved%20in%20last%20week-3.png" width="672" /></p>
+</div>
+<div id="top-10-16" class="section level5">
+<h5>Top 10</h5>
+<ol style="list-style-type: decimal">
+<li>Rushcliffe</li>
+<li>Waverley</li>
+<li>York</li>
+<li>Mole Valley</li>
+<li>North Hertfordshire</li>
+<li>Brentwood</li>
+<li>Eastleigh</li>
+<li>Richmond upon Thames</li>
+<li>Kingston upon Thames</li>
+<li>Bath and North East Somerset</li>
+</ol>
+</div>
+</div>
+<div id="most-improved-since-2nd-wave-peak-5" class="section level4">
+<h4>Most improved since 2nd wave peak</h4>
+<p>Our final set of awards go to those places that have improved the most since their 2nd wave peak. These are:</p>
+<div id="st-rushcliffe-2" class="section level5">
+<h5>1st : Rushcliffe</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%205%20graphs%20for%20most%20improved%20in%20second%20wave-1.png" width="672" /></p>
+</div>
+<div id="nd-york" class="section level5">
+<h5>2nd : York</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%205%20graphs%20for%20most%20improved%20in%20second%20wave-2.png" width="672" /></p>
+</div>
+<div id="rd-kingston-upon-thames" class="section level5">
+<h5>3rd : Kingston upon Thames</h5>
+<p><img src="covid-19-england-awards_files/figure-html/category%205%20graphs%20for%20most%20improved%20in%20second%20wave-3.png" width="672" /></p>
+</div>
+<div id="top-10-17" class="section level5">
+<h5>Top 10</h5>
+<ol style="list-style-type: decimal">
+<li>Rushcliffe</li>
+<li>York</li>
+<li>Kingston upon Thames</li>
+<li>Elmbridge</li>
+<li>Ribble Valley</li>
+<li>Richmond upon Thames</li>
+<li>Mole Valley</li>
+<li>Brentwood</li>
+<li>North Hertfordshire</li>
+<li>Rutland</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+</body>
+</html>

@@ -1,0 +1,715 @@
+---
+title: "Covid-19 England Awards"
+output: 
+  html_document:
+    toc: true
+    mathjax: null
+    self_contained: false
+params:
+  covid19_data_url: "https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv"
+  region_lookup_url: "https://opendata.arcgis.com/datasets/3ba3daf9278f47daba0f561889c3521a_0.csv"
+  restrictions_data_url: "https://docs.google.com/spreadsheets/d/1HBVmvsQXrkQgySW_OiTQdrS8WGCXqgWnmZ43PPi0XgY/export?format=csv&id=1HBVmvsQXrkQgySW_OiTQdrS8WGCXqgWnmZ43PPi0XgY"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache = TRUE)
+library(knitr)
+library(tidyverse)
+library(slider)
+library(rgeos)
+library(rgdal)
+library(maptools)
+library(scales)
+
+colour.minimal = "#e6b735"
+colour.moderate = "#d97641"
+colour.substantial = "#c43d53"
+colour.widespread = "#802f67"
+colour.odi_blue = "#178CFF"
+colour.odi_green = "#0DBC37"
+colour.odi_pink = "#E6007C"
+colour.odi_orange = "#FF6700"
+```
+
+Things are looking pretty grim in terms of Covid-19 in England. But there are some areas that are doing well. This page seeks to highlight local authorities that are navigating better than others through the Covid-19 second wave. Perhaps there are things we can learn from them.
+
+See the [source code is available on Github](https://github.com/JeniT/covid-19) if you want to look at this and other analyses, including analyses of the [Covid-19 case data in England in areas that aren't doing so well](https://jenit.github.io/covid-19/covid-19-uk-cases.html). The data on this page is from `r params$covid19_data_url` and reports "lab-confirmed positive COVID-19 PCR test on or up to the specimen date". The specimen date is the date that someone had the test taken. The government site has [more details about the meaning of case numbers](https://coronavirus.data.gov.uk/about-data#daily-and-cumulative-numbers-of-cases).
+
+```{r load data, include=FALSE}
+cases <- read_csv(params$covid19_data_url) %>%
+  rename(AreaName = `Area name`,
+         AreaCode = `Area code`,
+         AreaType = `Area type`,
+         Date = `Specimen date`,
+         DailyCases = `Daily lab-confirmed cases`,
+         CumulativeCases = `Cumulative lab-confirmed cases`,
+         CumulativeRate = `Cumulative lab-confirmed cases rate`)
+cases$Date <- as.Date(cases$Date)
+mostRecentDate = max(pull(cases, Date))
+cases <- filter(cases, Date <= mostRecentDate - 5)  
+mostRecentDate = max(pull(cases, Date))
+
+regionLookup <- read_csv(params$region_lookup_url) %>%
+  rename(AreaCode = LAD19CD,
+         AreaName = LAD19NM,
+         RegionCode = RGN19CD,
+         RegionName = RGN19NM) %>%
+  select(AreaCode, RegionCode, RegionName)
+
+restrictions <- read_csv(params$restrictions_data_url)
+restrictions$StartDate <- as.Date(restrictions$StartDate)
+restrictions$EndDate <- as.Date(restrictions$EndDate)
+restrictions <- filter(restrictions, StartDate <= mostRecentDate) %>%
+  mutate(EndDate = if_else(is.na(EndDate) | EndDate > mostRecentDate, max(mostRecentDate, StartDate), EndDate))
+
+populations <- read_csv("populations.csv")
+```
+
+These awards are based on data updated on `r format(mostRecentDate + 5, "%B %d")` but the awards will be based on data since `r format(mostRecentDate, "%B %d")` because it can take a number of days to process the test and to report the result.
+
+```{r add region names}
+localAuthorityCases <- filter(cases, AreaType == "ltla") %>% 
+  group_by(AreaCode) %>%
+  arrange(desc(Date)) %>%
+  select("AreaName", "AreaCode", "Date", "DailyCases", "CumulativeCases", "CumulativeRate")
+localAuthorityCases <- left_join(localAuthorityCases, regionLookup, by = "AreaCode") %>%
+  select(RegionName, RegionCode, AreaName:CumulativeRate)
+
+xrng = range(localAuthorityCases$Date)
+twoThirdsDate = xrng[2] - round((xrng[2] - xrng[1]) * 0.25)
+```
+
+The figures we're going to give awards for are based on a rolling seven day average of figures from the previous week.
+
+```{r calculate average daily cases}
+localAuthorityCases <- mutate(localAuthorityCases, AverageDailyCases = slide_dbl(DailyCases, mean, .after = 6))
+```
+
+When we compare local authorities, we need to bear in mind that different local authorities have different sizes. A small absolute number of cases in a large local authority is a greater achievement than that number of cases in a smaller local authority, because it means a smaller percentage of the population are affected.
+
+So we need to calculate infection rates. To do that, we're using [population data from the ONS](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatesforukenglandandwalesscotlandandnorthernireland) and calculating rates per 100,000 people.
+
+```{r calculate rates}
+localAuthorityCases <- left_join(localAuthorityCases, populations, by = c("AreaCode" = "Code"))
+
+localAuthorityCases <- mutate(localAuthorityCases, DailyRate = DailyCases * 100000 / `All ages`)
+localAuthorityCases <- mutate(localAuthorityCases, AverageDailyRate = AverageDailyCases * 100000 / `All ages`)
+```
+
+## National awards
+
+The following are the awards across the whole of England.
+
+### Lowest daily rate
+
+This set of awards is going to the areas that had the lowest average daily rates of cases per 100,000 population on `r format(mostRecentDate, "%B %d")`. These are:
+
+```{r graphs for lowest rates, results='asis'}
+case_rate_graph = function(area, subtitle) {
+  areaRestrictions <- filter(restrictions, AreaName == area, StartDate <= mostRecentDate)
+  if (area == "Hackney" || area == "City of London") {
+    area = "Hackney and City of London"
+  }
+  areaCases <- filter(localAuthorityCases, AreaName == area)
+  region = pull(areaCases, RegionName)[1]
+  yrng = range(areaCases$AverageDailyRate)
+  xrng = range(areaCases$Date)
+  mostRecentCase <- filter(areaCases, Date == xrng[2])
+  mostRecentDailyRate = pull(mostRecentCase, AverageDailyRate)
+
+  return(
+    ggplot() +
+    annotate(geom = "rect", xmin = xrng[1], xmax = xrng[2], ymin = 0, ymax = yrng[2], fill = colour.odi_blue, alpha = 0.5) +
+    annotate(geom = "rect", xmin = as.Date("2020-03-23"), xmax = as.Date("2020-07-04"), ymin = 0, ymax = yrng[2], fill = "white", alpha = 0.3) +
+    annotate(geom = "text", x = as.Date("2020-05-15"), y = yrng[2] * 0.95, color = "white", vjust = "top", label = "NATIONAL\nLOCKDOWN") +
+    annotate(geom = "rect", xmin = as.Date("2020-11-05"), xmax = xrng[2], ymin = 0, ymax = yrng[2], fill = "white", alpha = 0.3) +
+    geom_rect(data = areaRestrictions,
+              mapping = aes(xmin = StartDate, xmax = EndDate),
+              ymin = 0, ymax = yrng[2], fill = "white", alpha = 0.3) +
+    geom_col(data = areaCases,
+             mapping = aes(x = Date, y = AverageDailyRate),
+             fill = "#333333", width = 1) +
+    annotate(geom = "segment", x = as.Date("2020-07-04"), y = yrng[1], xend = as.Date("2020-07-04"), yend = yrng[2], color = "white", linetype = "dashed") +
+    annotate(geom = "text", x = as.Date("2020-07-07"), y = yrng[2] * 0.95, hjust = "right", angle = 90, color = "white", label = "national lockdown ends") +
+    annotate(geom = "segment", x = as.Date("2020-11-05"), y = yrng[1], xend = as.Date("2020-11-05"), yend = yrng[2], color = "white", linetype = "dashed") +
+    annotate(geom = "text", x = as.Date("2020-11-02"), y = yrng[2] * 0.95, hjust = "right", angle = 90, color = "white", label = "national lockdown starts") +
+    geom_vline(data = filter(areaRestrictions, !is.na(Tier)),
+               mapping = aes(xintercept = StartDate),
+               color = "white", linetype = "dashed") +
+    geom_text(data = filter(areaRestrictions, !is.na(Tier)),
+              mapping = aes(x = StartDate - 3, label = if_else(is.na(Tier), "", paste("Tier", Tier))),
+              y = yrng[2] * 0.95, hjust = "right", angle = 90, color = "white") +
+    annotate(geom = "segment", x = twoThirdsDate, xend = xrng[2], y = yrng[2] * 0.66, yend = mostRecentDailyRate, color = colour.odi_orange, size = 1) +
+    annotate(geom = "label", x = twoThirdsDate, y = yrng[2] * 0.66, color = "black", fill = colour.odi_orange, label = paste("7 day average of\n", round(mostRecentDailyRate, digits = 1), "daily cases\nper 100,000 people")) + 
+    annotate(geom = "point", x = xrng[2], y = mostRecentDailyRate, color = colour.odi_orange, fill = colour.odi_orange, size = 3) + 
+    scale_x_date(expand = c(0,0), date_breaks = "1 month", date_labels = "%b") +
+    scale_y_continuous(limits = c(0,yrng[2]), expand = c(0,0)) +
+    guides(fill = FALSE) +
+    labs(x = "Date", y = "7 day average daily rate per 100,000 people", title = paste(region, "/", area), subtitle = subtitle)
+  )
+}
+
+mostRecentCases = filter(localAuthorityCases, Date == mostRecentDate)
+
+lowestRateAreas = pull(arrange(mostRecentCases, by = AverageDailyRate), AreaName)[1:10]
+
+n = 1
+for (area in lowestRateAreas[1:3]) {
+  cat("#### ", ordinal(n), ": ", area, "\n\n")
+  print(case_rate_graph(area, paste(ifelse(n == 1, "Lowest", paste(ordinal(n), "lowest")), "daily rate per 100,000 people on", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("#### Top 10\n\n")
+for (area in lowestRateAreas) {
+  cat("  1. ", area, "\n")
+}
+```
+
+
+### Most improved in last week
+
+Arguably a better way of awarding local authority areas is by how much they are improving. This set of awards go to those places that have improved the most over in the week up to `r format(mostRecentDate, "%B %d")`. These are:
+
+```{r graphs for most improved in last week, results='asis'}
+weekly_improvement_graph = function(area, subtitle) {
+  areaRestrictions <- filter(restrictions, AreaName == area, StartDate <= mostRecentDate)
+  if (area == "Hackney" || area == "City of London") {
+    area = "Hackney and City of London"
+  }
+  areaCases <- filter(localAuthorityCases, AreaName == area)
+  region = pull(areaCases, RegionName)[1]
+  yrng = range(areaCases$AverageDailyRate)
+  xrng = range(areaCases$Date)
+  mostRecentCase <- filter(areaCases, Date == xrng[2])
+  weekAgoCase <- filter(areaCases, Date == xrng[2] - 7)
+  mostRecentDailyRate = pull(mostRecentCase, AverageDailyRate)
+  weekAgoDailyRate = pull(weekAgoCase, AverageDailyRate)
+
+  return(
+    ggplot() +
+    # background
+    annotate(geom = "rect", xmin = xrng[1], xmax = xrng[2], ymin = 0, ymax = yrng[2], fill = colour.odi_blue, alpha = 0.5) +
+    # lockdowns / restrictions
+    annotate(geom = "rect", xmin = as.Date("2020-03-23"), xmax = as.Date("2020-07-04"), ymin = 0, ymax = yrng[2], fill = "white", alpha = 0.3) +
+    annotate(geom = "text", x = as.Date("2020-05-15"), y = yrng[2] * 0.95, color = "white", vjust = "top", label = "NATIONAL\nLOCKDOWN") +
+    annotate(geom = "rect", xmin = as.Date("2020-11-05"), xmax = xrng[2], ymin = 0, ymax = yrng[2], fill = "white", alpha = 0.3) +
+    geom_rect(data = areaRestrictions,
+              mapping = aes(xmin = StartDate, xmax = EndDate),
+              ymin = 0, ymax = yrng[2], fill = "white", alpha = 0.3) +
+    # data
+    geom_col(data = areaCases,
+             mapping = aes(x = Date, y = AverageDailyRate),
+             fill = "#333333", width = 1) +
+    # lockdowns
+    annotate(geom = "segment", x = as.Date("2020-07-04"), y = yrng[1], xend = as.Date("2020-07-04"), yend = yrng[2], color = "white", linetype = "dashed") +
+    annotate(geom = "text", x = as.Date("2020-07-07"), y = yrng[2] * 0.95, hjust = "right", angle = 90, color = "white", label = "national lockdown ends") +
+    annotate(geom = "segment", x = as.Date("2020-11-05"), y = yrng[1], xend = as.Date("2020-11-05"), yend = yrng[2], color = "white", linetype = "dashed") +
+    annotate(geom = "text", x = as.Date("2020-11-02"), y = yrng[2] * 0.95, hjust = "right", angle = 90, color = "white", label = "national lockdown starts") +
+    geom_vline(data = filter(areaRestrictions, !is.na(Tier)),
+               mapping = aes(xintercept = StartDate),
+               color = "white", linetype = "dashed") +
+    geom_text(data = filter(areaRestrictions, !is.na(Tier)),
+              mapping = aes(x = StartDate - 3, label = if_else(is.na(Tier), "", paste("Tier", Tier))),
+              y = yrng[2] * 0.95, hjust = "right", angle = 90, color = "white") +
+    # prize information
+    annotate(geom = "point", x = xrng[2], y = mostRecentDailyRate, color = colour.odi_orange, fill = colour.odi_orange, size = 3) + 
+    annotate(geom = "point", x = xrng[2] - 7, y = weekAgoDailyRate, color = colour.odi_orange, fill = colour.odi_orange, size = 3) + 
+    annotate(geom = "segment", x = twoThirdsDate, xend = xrng[2] - 7, y = yrng[2] * 0.66, yend = weekAgoDailyRate, color = colour.odi_orange, size = 1) +
+    annotate(geom = "segment", x = twoThirdsDate, xend = xrng[2], y = yrng[2] * 0.33, yend = mostRecentDailyRate, color = colour.odi_orange, size = 1) +
+    annotate(geom = "label", x = twoThirdsDate, y = yrng[2] * 0.66, color = "black", fill = colour.odi_orange, label = paste("One week ago:\n", round(weekAgoDailyRate, digits = 1), "daily cases\nper 100,000 people")) + 
+    annotate(geom = "label", x = twoThirdsDate, y = yrng[2] * 0.33, color = "black", fill = colour.odi_orange, label = paste("Now:\n", round(mostRecentDailyRate, digits = 1), "daily cases\nper 100,000 people")) + 
+    scale_x_date(expand = c(0,0), date_breaks = "1 month", date_labels = "%b") +
+    scale_y_continuous(limits = c(0,yrng[2]), expand = c(0,0)) +
+    guides(fill = FALSE) +
+    labs(x = "Date", y = "7 day average daily rate per 100,000 people", title = paste(region, "/", area), subtitle = subtitle)
+  )
+}
+
+localAuthorityCases <- mutate(localAuthorityCases, AverageDailyRateMinusSeven = lead(AverageDailyRate, n = 7), WeeklyImprovement = (AverageDailyRateMinusSeven - AverageDailyRate) / AverageDailyRateMinusSeven)
+mostImprovedLastWeek <- filter(localAuthorityCases, Date == mostRecentDate) %>% arrange(desc(WeeklyImprovement))
+mostImprovedAreasLastWeek = unique(pull(mostImprovedLastWeek, AreaName))[1:10]
+
+n = 1
+for (area in mostImprovedAreasLastWeek[1:3]) {
+  cat("#### ", ordinal(n), ": ", area, "\n\n")
+  print(weekly_improvement_graph(area, paste(ifelse(n == 1, "Best", paste(ordinal(n), "best")), "improvement in the daily rate per 100,000 people in the last week, as of", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("#### Top 10\n\n")
+for (area in mostImprovedAreasLastWeek) {
+  cat("  1. ", area, "\n")
+}
+```
+
+
+### Most improved since 2nd wave peak
+
+Our final set of awards go to those places that have improved the most since their 2nd wave peak. These are:
+
+```{r graphs for most improved in second wave, results='asis'}
+second_wave_improvement_graph = function(area, subtitle) {
+  areaRestrictions <- filter(restrictions, AreaName == area, StartDate <= mostRecentDate)
+  if (area == "Hackney" || area == "City of London") {
+    area = "Hackney and City of London"
+  }
+  areaCases <- filter(localAuthorityCases, AreaName == area)
+  region = pull(areaCases, RegionName)[1]
+  yrng = range(areaCases$AverageDailyRate)
+  xrng = range(areaCases$Date)
+  mostRecentCase <- filter(areaCases, Date == xrng[2])
+  peakRateCase <- filter(areaCases, DifferenceFromPeak == 0)
+  mostRecentDailyRate = pull(mostRecentCase, AverageDailyRate)
+  peakRate = pull(peakRateCase, AverageDailyRate)
+  peakDate = pull(peakRateCase, Date)
+
+  return(
+    ggplot() +
+    # background
+    annotate(geom = "rect", xmin = xrng[1], xmax = xrng[2], ymin = 0, ymax = yrng[2], fill = colour.odi_blue, alpha = 0.5) +
+    # lockdowns / restrictions
+    annotate(geom = "rect", xmin = as.Date("2020-03-23"), xmax = as.Date("2020-07-04"), ymin = 0, ymax = yrng[2], fill = "white", alpha = 0.3) +
+    annotate(geom = "text", x = as.Date("2020-05-15"), y = yrng[2] * 0.95, color = "white", vjust = "top", label = "NATIONAL\nLOCKDOWN") +
+    annotate(geom = "rect", xmin = as.Date("2020-11-05"), xmax = xrng[2], ymin = 0, ymax = yrng[2], fill = "white", alpha = 0.3) +
+    geom_rect(data = areaRestrictions,
+              mapping = aes(xmin = StartDate, xmax = EndDate),
+              ymin = 0, ymax = yrng[2], fill = "white", alpha = 0.3) +
+    # data
+    geom_col(data = areaCases,
+             mapping = aes(x = Date, y = AverageDailyRate),
+             fill = "#333333", width = 1) +
+    # lockdowns
+    annotate(geom = "segment", x = as.Date("2020-07-04"), y = yrng[1], xend = as.Date("2020-07-04"), yend = yrng[2], color = "white", linetype = "dashed") +
+    annotate(geom = "text", x = as.Date("2020-07-07"), y = yrng[2] * 0.95, hjust = "right", angle = 90, color = "white", label = "national lockdown ends") +
+    annotate(geom = "segment", x = as.Date("2020-11-05"), y = yrng[1], xend = as.Date("2020-11-05"), yend = yrng[2], color = "white", linetype = "dashed") +
+    annotate(geom = "text", x = as.Date("2020-11-02"), y = yrng[2] * 0.95, hjust = "right", angle = 90, color = "white", label = "national lockdown starts") +
+    geom_vline(data = filter(areaRestrictions, !is.na(Tier)),
+               mapping = aes(xintercept = StartDate),
+               color = "white", linetype = "dashed") +
+    geom_text(data = filter(areaRestrictions, !is.na(Tier)),
+              mapping = aes(x = StartDate - 3, label = if_else(is.na(Tier), "", paste("Tier", Tier))),
+              y = yrng[2] * 0.95, hjust = "right", angle = 90, color = "white") +
+    # prize information
+    annotate(geom = "point", x = xrng[2], y = mostRecentDailyRate, color = colour.odi_orange, fill = colour.odi_orange, size = 3) + 
+    annotate(geom = "point", x = peakDate, y = peakRate, color = colour.odi_orange, fill = colour.odi_orange, size = 3) + 
+    annotate(geom = "segment", x = peakDate - 42, xend = peakDate, y = yrng[2] * 0.66, yend = peakRate, color = colour.odi_orange, size = 1) +
+    annotate(geom = "segment", x = twoThirdsDate, xend = xrng[2], y = yrng[2] * 0.33, yend = mostRecentDailyRate, color = colour.odi_orange, size = 1) +
+    annotate(geom = "label", x = peakDate - 42, y = yrng[2] * 0.66, color = "black", fill = colour.odi_orange, label = paste("At peak:\n", round(peakRate, digits = 1), "daily cases\nper 100,000 people")) + 
+    annotate(geom = "label", x = twoThirdsDate, y = yrng[2] * 0.33, color = "black", fill = colour.odi_orange, label = paste("Now:\n", round(mostRecentDailyRate, digits = 1), "daily cases\nper 100,000 people")) + 
+    scale_x_date(expand = c(0,0), date_breaks = "1 month", date_labels = "%b") +
+    scale_y_continuous(limits = c(0,yrng[2]), expand = c(0,0)) +
+    guides(fill = FALSE) +
+    labs(x = "Date", y = "7 day average daily rate per 100,000 people", title = paste(region, "/", area), subtitle = subtitle)
+  )
+}
+
+secondWavePeaks <- filter(localAuthorityCases, Date > as.Date("2020-08-01"), !is.na(AverageDailyRate)) %>% 
+  ungroup() %>%
+  group_by(AreaName) %>%
+  summarise(WaveTwoPeakRate = max(AverageDailyRate, na.rm = TRUE), .groups = "drop_last")
+
+localAuthorityCases <- left_join(localAuthorityCases, secondWavePeaks, by = c("AreaName" = "AreaName")) %>%
+  mutate(DifferenceFromPeak = (WaveTwoPeakRate - AverageDailyRate) / WaveTwoPeakRate)
+mostImprovedSecondWave <- filter(localAuthorityCases, Date == mostRecentDate) %>% arrange(desc(DifferenceFromPeak))
+mostImprovedAreasSecondWave = unique(pull(mostImprovedSecondWave, AreaName))[1:10]
+
+n = 1
+for (area in mostImprovedAreasSecondWave[1:3]) {
+  cat("#### ", ordinal(n), ": ", area, "\n\n")
+  print(second_wave_improvement_graph(area, paste(ifelse(n == 1, "Best", paste(ordinal(n), "best")), "improvement in the daily rate per 100,000 people since the second wave peak,\nas of", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("#### Top 10\n\n")
+for (area in mostImprovedAreasSecondWave) {
+  cat("  1. ", area, "\n")
+}
+```
+
+## Awards within different deprivation levels
+
+I'm also splitting local authorities into five different categories based on the [Indices of Deprivation](https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019) from 2019, which provide a measure of how deprived areas are, and giving awards within these categories.
+
+```{r imd, include=FALSE}
+imd <- read_csv("lad-imd.csv") %>%
+  rename(AreaCode = `Local Authority District code (2019)`,
+         IMDrank = `IMD - Rank of average score`) %>%
+  select(AreaCode, IMDrank)
+localAuthorityCases <- left_join(localAuthorityCases, imd, by = "AreaCode") %>%
+  mutate(IMDquintile = floor(IMDrank / (318 / 5)) + 1)
+
+category1 <- filter(localAuthorityCases, IMDquintile == 1)
+category2 <- filter(localAuthorityCases, IMDquintile == 2)
+category3 <- filter(localAuthorityCases, IMDquintile == 3)
+category4 <- filter(localAuthorityCases, IMDquintile == 4)
+category5 <- filter(localAuthorityCases, IMDquintile == 5)
+```
+
+### Highest quintile of deprivation
+
+```{r category 1, results='asis'}
+cat(paste(unique(pull(arrange(category1, by = AreaName), AreaName)), collapse = " | "))
+```
+
+#### Lowest daily rate
+
+This set of awards is going to go to the areas that had the lowest average daily rates of cases per 100,000 population on `r format(mostRecentDate, "%B %d")`. These are:
+
+```{r category 1 graphs for lowest rates, results='asis'}
+mostRecentCases = filter(category1, Date == mostRecentDate)
+lowestRateAreas = pull(arrange(mostRecentCases, by = AverageDailyRate), AreaName)[1:10]
+
+n = 1
+for (area in lowestRateAreas[1:3]) {
+  cat("##### ", ordinal(n), ": ", area, "\n\n")
+  print(case_rate_graph(area, paste(ifelse(n == 1, "Lowest", paste(ordinal(n), "lowest")), "daily rate per 100,000 people on", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("##### Top 10\n\n")
+for (area in lowestRateAreas) {
+  cat("  1. ", area, "\n")
+}
+```
+
+#### Most improved in last week
+
+Arguably a better way of awarding local authority areas is by how much they are improving. This set of awards go to those places that have improved the most over in the week up to `r format(mostRecentDate, "%B %d")`. These are:
+
+```{r category 1 graphs for most improved in last week, results='asis'}
+mostImprovedLastWeek <- filter(category1, Date == mostRecentDate) %>% arrange(desc(WeeklyImprovement))
+mostImprovedAreasLastWeek = unique(pull(mostImprovedLastWeek, AreaName))[1:10]
+
+n = 1
+for (area in mostImprovedAreasLastWeek[1:3]) {
+  cat("##### ", ordinal(n), ": ", area, "\n\n")
+  print(weekly_improvement_graph(area, paste(ifelse(n == 1, "Best", paste(ordinal(n), "best")), "improvement in the daily rate per 100,000 people in the last week, as of", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("##### Top 10\n\n")
+for (area in mostImprovedAreasLastWeek) {
+  cat("  1. ", area, "\n")
+}
+```
+
+#### Most improved since 2nd wave peak
+
+Our final set of awards go to those places that have improved the most since their 2nd wave peak. These are:
+
+```{r category 1 graphs for most improved in second wave, results='asis'}
+mostImprovedSecondWave <- filter(category1, Date == mostRecentDate) %>% arrange(desc(DifferenceFromPeak))
+mostImprovedAreasSecondWave = unique(pull(mostImprovedSecondWave, AreaName))[1:10]
+
+n = 1
+for (area in mostImprovedAreasSecondWave[1:3]) {
+  cat("##### ", ordinal(n), ": ", area, "\n\n")
+  print(second_wave_improvement_graph(area, paste(ifelse(n == 1, "Best", paste(ordinal(n), "best")), "improvement in the daily rate per 100,000 people since the second wave peak,\nas of", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("##### Top 10\n\n")
+for (area in mostImprovedAreasSecondWave) {
+  cat("  1. ", area, "\n")
+}
+```
+
+
+### Second highest quintile of deprivation
+
+```{r category 2, results='asis'}
+cat(paste(unique(pull(arrange(category2, by = AreaName), AreaName)), collapse = " | "))
+```
+
+#### Lowest daily rate
+
+This set of awards is going to go to the areas that had the lowest average daily rates of cases per 100,000 population on `r format(mostRecentDate, "%B %d")`. These are:
+
+```{r category 2 graphs for lowest rates, results='asis'}
+mostRecentCases = filter(category2, Date == mostRecentDate)
+lowestRateAreas = pull(arrange(mostRecentCases, by = AverageDailyRate), AreaName)[1:10]
+
+n = 1
+for (area in lowestRateAreas[1:3]) {
+  cat("##### ", ordinal(n), ": ", area, "\n\n")
+  print(case_rate_graph(area, paste(ifelse(n == 1, "Lowest", paste(ordinal(n), "lowest")), "daily rate per 100,000 people on", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("##### Top 10\n\n")
+for (area in lowestRateAreas) {
+  cat("  1. ", area, "\n")
+}
+```
+
+#### Most improved in last week
+
+Arguably a better way of awarding local authority areas is by how much they are improving. This set of awards go to those places that have improved the most over in the week up to `r format(mostRecentDate, "%B %d")`. These are:
+
+```{r category 2 graphs for most improved in last week, results='asis'}
+mostImprovedLastWeek <- filter(category2, Date == mostRecentDate) %>% arrange(desc(WeeklyImprovement))
+mostImprovedAreasLastWeek = unique(pull(mostImprovedLastWeek, AreaName))[1:10]
+
+n = 1
+for (area in mostImprovedAreasLastWeek[1:3]) {
+  cat("##### ", ordinal(n), ": ", area, "\n\n")
+  print(weekly_improvement_graph(area, paste(ifelse(n == 1, "Best", paste(ordinal(n), "best")), "improvement in the daily rate per 100,000 people in the last week, as of", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("##### Top 10\n\n")
+for (area in mostImprovedAreasLastWeek) {
+  cat("  1. ", area, "\n")
+}
+```
+
+#### Most improved since 2nd wave peak
+
+Our final set of awards go to those places that have improved the most since their 2nd wave peak. These are:
+
+```{r category 2 graphs for most improved in second wave, results='asis'}
+mostImprovedSecondWave <- filter(category2, Date == mostRecentDate) %>% arrange(desc(DifferenceFromPeak))
+mostImprovedAreasSecondWave = unique(pull(mostImprovedSecondWave, AreaName))[1:10]
+
+n = 1
+for (area in mostImprovedAreasSecondWave[1:3]) {
+  cat("##### ", ordinal(n), ": ", area, "\n\n")
+  print(second_wave_improvement_graph(area, paste(ifelse(n == 1, "Best", paste(ordinal(n), "best")), "improvement in the daily rate per 100,000 people since the second wave peak,\nas of", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("##### Top 10\n\n")
+for (area in mostImprovedAreasSecondWave) {
+  cat("  1. ", area, "\n")
+}
+```
+
+
+### Middle quintile of deprivation
+
+```{r category 3, results='asis'}
+cat(paste(unique(pull(arrange(category3, by = AreaName), AreaName)), collapse = " | "))
+```
+
+#### Lowest daily rate
+
+This set of awards is going to go to the areas that had the lowest average daily rates of cases per 100,000 population on `r format(mostRecentDate, "%B %d")`. These are:
+
+```{r category 3 graphs for lowest rates, results='asis'}
+mostRecentCases = filter(category3, Date == mostRecentDate)
+lowestRateAreas = pull(arrange(mostRecentCases, by = AverageDailyRate), AreaName)[1:10]
+
+n = 1
+for (area in lowestRateAreas[1:3]) {
+  cat("##### ", ordinal(n), ": ", area, "\n\n")
+  print(case_rate_graph(area, paste(ifelse(n == 1, "Lowest", paste(ordinal(n), "lowest")), "daily rate per 100,000 people on", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("##### Top 10\n\n")
+for (area in lowestRateAreas) {
+  cat("  1. ", area, "\n")
+}
+```
+
+#### Most improved in last week
+
+Arguably a better way of awarding local authority areas is by how much they are improving. This set of awards go to those places that have improved the most over in the week up to `r format(mostRecentDate, "%B %d")`. These are:
+
+```{r category 3 graphs for most improved in last week, results='asis'}
+mostImprovedLastWeek <- filter(category3, Date == mostRecentDate) %>% arrange(desc(WeeklyImprovement))
+mostImprovedAreasLastWeek = unique(pull(mostImprovedLastWeek, AreaName))[1:10]
+
+n = 1
+for (area in mostImprovedAreasLastWeek[1:3]) {
+  cat("##### ", ordinal(n), ": ", area, "\n\n")
+  print(weekly_improvement_graph(area, paste(ifelse(n == 1, "Best", paste(ordinal(n), "best")), "improvement in the daily rate per 100,000 people in the last week, as of", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("##### Top 10\n\n")
+for (area in mostImprovedAreasLastWeek) {
+  cat("  1. ", area, "\n")
+}
+```
+
+#### Most improved since 2nd wave peak
+
+Our final set of awards go to those places that have improved the most since their 2nd wave peak. These are:
+
+```{r category 3 graphs for most improved in second wave, results='asis'}
+mostImprovedSecondWave <- filter(category3, Date == mostRecentDate) %>% arrange(desc(DifferenceFromPeak))
+mostImprovedAreasSecondWave = unique(pull(mostImprovedSecondWave, AreaName))[1:10]
+
+n = 1
+for (area in mostImprovedAreasSecondWave[1:3]) {
+  cat("##### ", ordinal(n), ": ", area, "\n\n")
+  print(second_wave_improvement_graph(area, paste(ifelse(n == 1, "Best", paste(ordinal(n), "best")), "improvement in the daily rate per 100,000 people since the second wave peak,\nas of", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("##### Top 10\n\n")
+for (area in mostImprovedAreasSecondWave) {
+  cat("  1. ", area, "\n")
+}
+```
+
+
+### Second lowest quintile of deprivation
+
+```{r category 4, results='asis'}
+cat(paste(unique(pull(arrange(category4, by = AreaName), AreaName)), collapse = " | "))
+```
+
+#### Lowest daily rate
+
+This set of awards is going to go to the areas that had the lowest average daily rates of cases per 100,000 population on `r format(mostRecentDate, "%B %d")`. These are:
+
+```{r category 4 graphs for lowest rates, results='asis'}
+mostRecentCases = filter(category4, Date == mostRecentDate)
+lowestRateAreas = pull(arrange(mostRecentCases, by = AverageDailyRate), AreaName)[1:10]
+
+n = 1
+for (area in lowestRateAreas[1:3]) {
+  cat("##### ", ordinal(n), ": ", area, "\n\n")
+  print(case_rate_graph(area, paste(ifelse(n == 1, "Lowest", paste(ordinal(n), "lowest")), "daily rate per 100,000 people on", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("##### Top 10\n\n")
+for (area in lowestRateAreas) {
+  cat("  1. ", area, "\n")
+}
+```
+
+#### Most improved in last week
+
+Arguably a better way of awarding local authority areas is by how much they are improving. This set of awards go to those places that have improved the most over in the week up to `r format(mostRecentDate, "%B %d")`. These are:
+
+```{r category 4 graphs for most improved in last week, results='asis'}
+mostImprovedLastWeek <- filter(category4, Date == mostRecentDate) %>% arrange(desc(WeeklyImprovement))
+mostImprovedAreasLastWeek = unique(pull(mostImprovedLastWeek, AreaName))[1:10]
+
+n = 1
+for (area in mostImprovedAreasLastWeek[1:3]) {
+  cat("##### ", ordinal(n), ": ", area, "\n\n")
+  print(weekly_improvement_graph(area, paste(ifelse(n == 1, "Best", paste(ordinal(n), "best")), "improvement in the daily rate per 100,000 people in the last week, as of", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("##### Top 10\n\n")
+for (area in mostImprovedAreasLastWeek) {
+  cat("  1. ", area, "\n")
+}
+```
+
+#### Most improved since 2nd wave peak
+
+Our final set of awards go to those places that have improved the most since their 2nd wave peak. These are:
+
+```{r category 4 graphs for most improved in second wave, results='asis'}
+mostImprovedSecondWave <- filter(category4, Date == mostRecentDate) %>% arrange(desc(DifferenceFromPeak))
+mostImprovedAreasSecondWave = unique(pull(mostImprovedSecondWave, AreaName))[1:10]
+
+n = 1
+for (area in mostImprovedAreasSecondWave[1:3]) {
+  cat("##### ", ordinal(n), ": ", area, "\n\n")
+  print(second_wave_improvement_graph(area, paste(ifelse(n == 1, "Best", paste(ordinal(n), "best")), "improvement in the daily rate per 100,000 people since the second wave peak,\nas of", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("##### Top 10\n\n")
+for (area in mostImprovedAreasSecondWave) {
+  cat("  1. ", area, "\n")
+}
+```
+
+
+### Lowest quintile of deprivation (least deprived)
+
+```{r category 5, results='asis'}
+cat(paste(unique(pull(arrange(category5, by = AreaName), AreaName)), collapse = " | "))
+```
+
+#### Lowest daily rate
+
+This set of awards is going to go to the areas that had the lowest average daily rates of cases per 100,000 population on `r format(mostRecentDate, "%B %d")`. These are:
+
+```{r category 5 graphs for lowest rates, results='asis'}
+mostRecentCases = filter(category5, Date == mostRecentDate)
+lowestRateAreas = pull(arrange(mostRecentCases, by = AverageDailyRate), AreaName)[1:10]
+
+n = 1
+for (area in lowestRateAreas[1:3]) {
+  cat("##### ", ordinal(n), ": ", area, "\n\n")
+  print(case_rate_graph(area, paste(ifelse(n == 1, "Lowest", paste(ordinal(n), "lowest")), "daily rate per 100,000 people on", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("##### Top 10\n\n")
+for (area in lowestRateAreas) {
+  cat("  1. ", area, "\n")
+}
+```
+
+#### Most improved in last week
+
+Arguably a better way of awarding local authority areas is by how much they are improving. This set of awards go to those places that have improved the most over in the week up to `r format(mostRecentDate, "%B %d")`. These are:
+
+```{r category 5 graphs for most improved in last week, results='asis'}
+mostImprovedLastWeek <- filter(category5, Date == mostRecentDate) %>% arrange(desc(WeeklyImprovement))
+mostImprovedAreasLastWeek = unique(pull(mostImprovedLastWeek, AreaName))[1:10]
+
+n = 1
+for (area in mostImprovedAreasLastWeek[1:3]) {
+  cat("##### ", ordinal(n), ": ", area, "\n\n")
+  print(weekly_improvement_graph(area, paste(ifelse(n == 1, "Best", paste(ordinal(n), "best")), "improvement in the daily rate per 100,000 people in the last week, as of", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("##### Top 10\n\n")
+for (area in mostImprovedAreasLastWeek) {
+  cat("  1. ", area, "\n")
+}
+```
+
+#### Most improved since 2nd wave peak
+
+Our final set of awards go to those places that have improved the most since their 2nd wave peak. These are:
+
+```{r category 5 graphs for most improved in second wave, results='asis'}
+mostImprovedSecondWave <- filter(category5, Date == mostRecentDate) %>% arrange(desc(DifferenceFromPeak))
+mostImprovedAreasSecondWave = unique(pull(mostImprovedSecondWave, AreaName))[1:10]
+
+n = 1
+for (area in mostImprovedAreasSecondWave[1:3]) {
+  cat("##### ", ordinal(n), ": ", area, "\n\n")
+  print(second_wave_improvement_graph(area, paste(ifelse(n == 1, "Best", paste(ordinal(n), "best")), "improvement in the daily rate per 100,000 people since the second wave peak,\nas of", format(mostRecentDate, "%B %d"))))
+  cat("\n\n")
+  n = n + 1
+}
+
+cat("##### Top 10\n\n")
+for (area in mostImprovedAreasSecondWave) {
+  cat("  1. ", area, "\n")
+}
+```
+
